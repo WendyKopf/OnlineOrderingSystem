@@ -1,0 +1,17 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} - POTS</title>
+    {% else %}
+    <title>POTS</title>
+    {% endif %}
+
+    <!-- Bootstrap CSS -->
+    <!-- Nav bar CSS -->
+  </head>
+
+  <body>
+  {% block content %}
+  {% endblock %}
+  </body>
+</html>
