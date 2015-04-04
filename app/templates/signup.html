@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Create Account</h1>
+<form action="" method="post" name="signup">
+  {{ form.hidden_tag() }}
+  {% if form.errors %}
+    {% for fieldname, errors in form.errors|dictsort %}
+      {% for error in errors %}
+      <p>{{ form[fieldname].label }} : {{ error }}</p>  
+      {% endfor %} 
+    {% endfor %}
+  {% endif %}
+  <p>{{ form.username.label }}: {{ form.username }}</p>
+  <p>{{ form.password1.label }}: {{ form.password1 }}</p>
+  <p>{{ form.password2.label }}: {{ form.password2 }}</p>
+  <p><input type="submit" value="Create Account"></p>
+</form>
+{% endblock %}
