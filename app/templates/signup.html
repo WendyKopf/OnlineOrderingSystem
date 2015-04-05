@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% import "forms.html" as forms %}
+
 {% block content %}
-<h1>Create Account</h1>
-<form action="" method="post" name="signup">
+<h1 class="page-header">Create Account</h1>
+<form class="form-horizontal" action="" method="post" name="signup">
   {{ form.hidden_tag() }}
   {% if form.errors %}
     {% for fieldname, errors in form.errors|dictsort %}
@@ -10,9 +12,9 @@
       {% endfor %} 
     {% endfor %}
   {% endif %}
-  <p>{{ form.username.label }}: {{ form.username }}</p>
-  <p>{{ form.password1.label }}: {{ form.password1 }}</p>
-  <p>{{ form.password2.label }}: {{ form.password2 }}</p>
-  <p><input type="submit" value="Create Account"></p>
+  {{ forms.text_field(form.username.id, form.username.label) }}
+  {{ forms.password_field(form.password1.id, form.password1.label) }}
+  {{ forms.password_field(form.password2.id, form.password2.label) }}
+  {{ forms.submit_button("Create Account") }}
 </form>
 {% endblock %}
