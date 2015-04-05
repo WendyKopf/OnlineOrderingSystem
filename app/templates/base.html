@@ -1,5 +1,10 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- ^^^ Magic incantation required by Bootstrap --> 
     {% if title %}
     <title>{{ title }} - POTS</title>
     {% else %}
@@ -7,16 +12,23 @@
     {% endif %}
 
     <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <!-- Nav bar CSS -->
   </head>
 
   <body>
-  {% with messages = get_flashed_messages() %}
-  {% for msg in messages %}
-    <p>{{ msg }}</p>
-  {% endfor %}
-  {% endwith %}
-  {% block content %}
-  {% endblock %}
+    <!-- Pull in jQuery so Bootstrap is happy -->
+    <script src="/static/jquery.min.js"></script>
+
+    {% with messages = get_flashed_messages() %}
+    {% for msg in messages %}
+      <p>{{ msg }}</p>
+    {% endfor %}
+    {% endwith %}
+    {% block content %}
+    {% endblock %}
+
+    <!-- Pull in Bootstrap last -->
+    <script src="/static/js/bootstrap.min.js"></script>
   </body>
 </html>
