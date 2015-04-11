@@ -6,5 +6,6 @@
     - flask-sqlalchemy
     - flask-wtf
     - flask-bcrypt
+    - flask-login
 * Bootstrap 3.3.4
 * jQuery 1.11.2
