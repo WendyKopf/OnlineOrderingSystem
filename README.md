@@ -4,6 +4,7 @@
 * Python libraries:
     - flask
     - flask-sqlalchemy
+    - migrate (sqlalchemy-migrate)
     - flask-wtf
     - flask-bcrypt
     - flask-login
