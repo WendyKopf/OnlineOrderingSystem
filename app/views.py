@@ -26,3 +26,27 @@ def signup():
         return render_template('signup.html', title=title, form=form)
     else:
         return render_template('signup.html', title=title, form=form)
+
+@app.route('/clients/add/', methods['GET', 'POST'])
+def add_client():
+    form = NewCustomerForm()
+    title = 'Add Clients'
+
+    # Send user back to previous page if form errors exist
+    if not form.validate_on_submit():
+        return render_template('add_client.html', title=title, form=form)
+
+    # Validate form data
+    if form.password1.data != form.password2.data:
+        form.errors['password2'] = u'Passwords do not match'
+
+    if len(form.errors) == 0:
+        flash('Client added')
+        return redirect('/clients/')
+    else:
+        return render_template('add_client.html', title=title, form=form)
+
+@app.route('/clients/', methods['GET', 'POST'])
+def clients():
+    title = 'All Clients'
+    return render_template('clients.html', title=title)

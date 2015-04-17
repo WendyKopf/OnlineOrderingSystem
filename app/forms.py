@@ -1,6 +1,8 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField
+from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.validators import DataRequired, Length
+
 
 class CreateLoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])

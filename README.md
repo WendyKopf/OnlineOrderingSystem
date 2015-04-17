@@ -1,7 +1,7 @@
 # Dependencies
 
 * Python 2.7 with development libraries
-* Python libraries:
+* Python libraries (install with pip):
     - flask
     - flask-sqlalchemy
     - migrate (sqlalchemy-migrate)
