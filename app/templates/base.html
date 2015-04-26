@@ -30,14 +30,24 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <!-- All users get a home button -->
-            <li><a href="/">Home</a></li>
+            <!-- All users get a logout button -->
+            <li><a href="/logout/">Log Out</a></li>
 
             {# BEGIN Conditional navbar buttons #} 
             {# END   Conditional navbar buttons #} 
         </div> <!-- id="navbar" -->
       </div>
     </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="/">Home</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
     {% with messages = get_flashed_messages() %}
     {% for msg in messages %}
@@ -47,8 +57,10 @@
       </div>
     {% endfor %}
     {% endwith %}
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     {% block content %}
     {% endblock %}
+      </div>
 
     <!-- Pull in Bootstrap last -->
     <script src="/static/js/bootstrap.min.js"></script>
