@@ -23,9 +23,9 @@ class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(USERNAME_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
     managed_by = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)
-    role = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     commission = db.Column(db.Float, nullable=False)
     max_discount = db.Column(db.Float, nullable=False)
+    title = db.Column(db.Enum('Director', 'Manager', 'Salesperson'), nullable=False)
 
     manager = db.relation('Employee', remote_side=[id], backref=db.backref('direct_reports'))
 
@@ -34,13 +34,6 @@ class Employee(db.Model):
         return sum([order.total for order in self.orders])
     def __repr__(self):
         return '<Employee id: %i, username: %r>' % (self.id, self.username)
-
-class Role(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), nullable=False, unique=True)
-
-    def __repr__(self):
-        return '<Role id: %i, name: %r>' % (self.id, self.name)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
