@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Buy {{ form.name.data }}</h1>
+<form class="form-horizontal" action="{{ request.url }}" method="post" name="buy_item">
+  {{ form.hidden_tag() }}
+  {% if form.errors %}
+    {% for fieldname, errors in form.errors|dictsort %}
+      {% for error in errors %}
+      <p>{{ form[fieldname].label }} : {{ error }}</p>
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+  {{ forms.disabled_text_field(form.manufacturer) }}
+  {{ forms.disabled_text_field(form.name) }}
+  {{ forms.disabled_price_field(form.price) }}
+  {{ forms.quantity_field(form.quantity) }}
+  {{ forms.submit_button("Buy") }}
+</form>
+{% endblock %}

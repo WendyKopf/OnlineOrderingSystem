@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Your Cart</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+{% for (product, quantity) in cart %}
+    <tr>
+      <td>{{ product.manufacturer }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ '$%.2f' % product.price }}</td>
+      <td>{{ product.quantity }}</td>
+      <td><a class="btn btn-primary" href="/demo/cart/remove/{{ product.id }}/">Remove</a></td>
+    </tr>
+{% endfor %}
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><a class="btn btn-primary" href="/demo/cart/placeorder/">Place Order</a></td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
