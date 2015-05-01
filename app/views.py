@@ -3,7 +3,7 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 
 from app import app, bcrypt, db, login_manager
 
-from .forms import CreateUserForm, ProductForm
+from .forms import CreateUserForm, LoginForm, ProductForm
 from .models import Client, Employee, Product, Order, OrderItem, User
 
 from helpers import add_error
