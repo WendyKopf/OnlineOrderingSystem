@@ -30,11 +30,12 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <!-- All users get a logout button -->
-            <li><a href="/logout/">Log Out</a></li>
-
-            {# BEGIN Conditional navbar buttons #} 
-            {# END   Conditional navbar buttons #} 
+            {% if current_user.is_authenticated() %}
+            <li><a href="/logout">Log Out</a></li>
+            {% else %}
+            <li><a href="/login">Log In</a></li>
+            {% endif %}
+          </ul>
         </div> <!-- id="navbar" -->
       </div>
     </nav>
@@ -49,6 +50,7 @@
       </div>
     </div>
 
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     {% with messages = get_flashed_messages() %}
     {% for msg in messages %}
       <div class="alert alert-info">
@@ -57,7 +59,6 @@
       </div>
     {% endfor %}
     {% endwith %}
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     {% block content %}
     {% endblock %}
       </div>

@@ -1,50 +1,80 @@
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import flash, g, redirect, render_template, request, session, url_for
+from flask.ext.login import current_user, login_required, login_user, logout_user
 
-from app import app, db
+from app import app, bcrypt, db, login_manager
 
-from .forms import CreateLoginForm, ProductForm
-from .models import Employee, Product, Order, OrderItem
+from .forms import CreateUserForm, ProductForm
+from .models import Client, Employee, Product, Order, OrderItem, User
 
 from helpers import add_error
 
+
+###############################################################################
+# Login management 
+###############################################################################
+login_manager.login_view = 'login'
+@login_manager.user_loader
+def load_user(username):
+    return db.session.query(User).filter_by(username=username).first()
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # We check the hash even if the user does not exist so that
+        # we do not leak hints about the validity of a username
+        user = db.session.query(User).filter_by(username=form.username.data).first()
+        saved_hash = ''
+        if user is not None:
+            saved_hash = user.password_hash
+        if bcrypt.check_password_hash(saved_hash, form.password.data):
+            current_user._authenticated = True
+            login_user(user, remember=True)
+            return redirect(request.args.get('next') or url_for('index'))
+        flash('Invalid credentials')
+    return render_template('login.html', form=form)
+
+@app.route('/logout/')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+###############################################################################
+# Application views 
+###############################################################################
 @app.route('/index')
+@login_required
 def index():
     return render_template('index.html',
                            title='Home')
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = CreateLoginForm()
-    title = 'Sign Up'
-    valid = form.validate_on_submit()
-    if valid and form.password1.data == form.password2.data:
-        flash('Data Validated!')
-        flash('If we had a database setup, your login would be stored')
-        return redirect('/signup')
-    elif valid:
-        add_error(form, 'password2', u'Passwords do not match')
-        return render_template('signup.html', title=title, form=form)
-    else:
-        return render_template('signup.html', title=title, form=form)
-
-@app.route('/clients/add/', methods=['GET', 'POST'])
-def add_client():
-    form = NewCustomerForm()
-    title = 'Add Clients'
+@app.route('/users/add/', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    form = CreateUserForm()
+    title = 'Add User'
 
     # Send user back to previous page if form errors exist
-    if not form.validate_on_submit():
-        return render_template('add_client.html', title=title, form=form)
-
-    # Validate form data
-    if form.password1.data != form.password2.data:
-        form.errors['password2'] = u'Passwords do not match'
-
-    if len(form.errors) == 0:
-        flash('Client added')
-        return redirect('/clients/')
-    else:
-        return render_template('add_client.html', title=title, form=form)
+    if form.validate_on_submit():
+        # Validate form data
+        if form.password1.data == form.password2.data:
+            user = User()
+            user.username = form.username.data
+            user.password_hash = unicode(bcrypt.generate_password_hash(form.password1.data))
+            user.active = True
+            user.is_employee = form.is_employee.data
+            print 'username : %s, passowrd: %s, is_active: %s, is_employee %s' % (user.username, user.password_hash, user.is_active, user.is_employee)
+            db.session.add(user)
+            db.session.commit()
+            flash('User added successfully')
+            return redirect('/users/')
+        else:
+            flash('Passwords do not match')
+    if form.errors:
+        print form.errors
+    return render_template('add_user.html', title=title, form=form)
 
 @app.route('/clients/', methods=['GET', 'POST'])
 def clients():

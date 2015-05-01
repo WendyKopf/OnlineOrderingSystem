@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Login</h1>
+<form class="form-horizontal" action="{{ url_for('login', next=request.args.get('next')) }}" method="post" name="login">
+  {{ form.hidden_tag() }}
+  {{ forms.text_field(form.username) }}
+  {{ forms.password_field(form.password) }}
+  {{ forms.submit_button("Login") }}
+</form>
+{% endblock %}

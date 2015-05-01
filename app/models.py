@@ -8,11 +8,21 @@ class User(db.Model):
     is_employee = db.Column(db.Boolean, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
 
+    _authenticated = False 
+
+    def get_id(self):
+        return self.username
+    def is_active(self):
+        return self.active
+    def is_anonymous(self):
+        return False
+    def is_authenticated(self):
+        return True 
     def __repr__(self):
         return '<User %r>' % (self.username)
 
 class Client(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(USERNAME_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
     company = db.Column(db.String(64), nullable=False)
 
