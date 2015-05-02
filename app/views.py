@@ -51,7 +51,7 @@ def index():
                            title='Home')
 
 @app.route('/users/add/', methods=['GET', 'POST'])
-@login_required
+#@login_required
 def add_user():
     form = CreateUserForm()
     title = 'Add User'
