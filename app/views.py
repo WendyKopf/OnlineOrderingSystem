@@ -80,6 +80,11 @@ def add_user():
 def clients():
     title = 'All Clients'
     return render_template('clients.html', title=title)
+    
+@app.route('/users/')
+def users():
+    userlist = User.query.filter_by(active=True).all()
+    return render_template('users.html', title='All Current Users', users=userlist)
 
 
 ###############################################################################
