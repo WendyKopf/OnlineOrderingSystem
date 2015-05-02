@@ -15,7 +15,7 @@
 {% for user in users %}
 {% if user.active %}
     <tr>
-      <td>{{ user.username }}</td>ml
+      <td>{{ user.username }}</td>
       <td>{{ user.active }}</td>
       <td>{{ user.is_employee }}</td>
       <td><a class="btn btn-primary" href="/users/{{ user.username }}/">Edit</a></td>
