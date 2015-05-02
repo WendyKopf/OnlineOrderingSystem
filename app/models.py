@@ -1,9 +1,11 @@
 from app import db
 
-USERNAME_LEN = 32
+USERNAME_MIN_LEN = 3
+USERNAME_MAX_LEN = 32
+PASSWORD_MIN_LEN = 10
 
 class User(db.Model):
-    username = db.Column(db.String(USERNAME_LEN), primary_key=True)
+    username = db.Column(db.String(USERNAME_MAX_LEN), primary_key=True)
     password_hash = db.Column(db.Binary(60), nullable=False)
     is_employee = db.Column(db.Boolean, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
@@ -23,15 +25,19 @@ class User(db.Model):
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(USERNAME_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
+    username = db.Column(db.String(USERNAME_MAX_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
     company = db.Column(db.String(64), nullable=False)
 
     def __repr__(self):
         return '<Client id: %i, username: %r>' % (self.id, self.username)
 
+# XXX Should these be in the DB instead?
+DEFAULT_DIRECTOR_COMMISSION     = 0.05
+DEFAULT_DIRECTOR_MAX_DISCOUNT   = 0.20
+
 class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(USERNAME_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
+    username = db.Column(db.String(USERNAME_MAX_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
     managed_by = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)
     commission = db.Column(db.Float, nullable=False)
     max_discount = db.Column(db.Float, nullable=False)
@@ -80,7 +86,7 @@ class Promotion(db.Model):
     discount = db.Column(db.Float, nullable=False, unique=True)
 
 class Feedback(db.Model):
-    from_user = db.Column(db.String(USERNAME_LEN), nullable=False, primary_key=True)
-    to_user = db.Column(db.String(USERNAME_LEN), nullable=False, primary_key=True)
+    from_user = db.Column(db.String(USERNAME_MAX_LEN), nullable=False, primary_key=True)
+    to_user = db.Column(db.String(USERNAME_MAX_LEN), nullable=False, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, primary_key=True)
     is_positive = db.Column(db.Boolean, nullable=False)
