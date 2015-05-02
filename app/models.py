@@ -23,7 +23,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
-class Client(db.Model):
+class Client(User):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(USERNAME_MAX_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
     company = db.Column(db.String(64), nullable=False)
@@ -35,15 +35,15 @@ class Client(db.Model):
 DEFAULT_DIRECTOR_COMMISSION     = 0.05
 DEFAULT_DIRECTOR_MAX_DISCOUNT   = 0.20
 
-class Employee(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class Employee(User):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(USERNAME_MAX_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
     managed_by = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)
     commission = db.Column(db.Float, nullable=False)
     max_discount = db.Column(db.Float, nullable=False)
     title = db.Column(db.Enum('Director', 'Manager', 'Salesperson'), nullable=False)
 
-    manager = db.relation('Employee', remote_side=[id], backref=db.backref('direct_reports'))
+    manager = db.relation('Employee', foreign_keys=[managed_by], remote_side=[id], backref=db.backref('direct_reports'))
 
     @property
     def sales_total(self):
