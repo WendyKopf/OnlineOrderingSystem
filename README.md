@@ -8,5 +8,6 @@
     - flask-wtf
     - flask-bcrypt
     - flask-login
+    - flask-script
 * Bootstrap 3.3.4
 * jQuery 1.11.2
