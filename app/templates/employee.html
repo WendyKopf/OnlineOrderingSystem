@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="page-header">Employee Details - {{ employee.username }}</h1>
+  <div class="row">
+    <div class="col-sm-2">Username</div>
+    <div class="col-sm-2">{{ employee.username }}</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2">Title</div>
+    <div class="col-sm-2">{{ employee.title }}</div>
+  </div>
+  <div class="row">
+    {% if employee.title != 'Director' %}
+    <div class="col-sm-2">{{ employee.manager }}</div>
+    {% endif %}
+  </div>
+  <div class="row">
+    <div class="col-sm-2">Commission</div>
+    <div class="col-sm-2">{{ employee.commission }}%</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2">Maximum Discount</div>
+    <div class="col-sm-2">{{ employee.max_discount }}%</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2">
+      <a class="btn btn-primary" href="/employee/edit/{{ employee.id }}/">Edit</a>
+    </div>
+  </div>
+
+{% endblock %}
