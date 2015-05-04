@@ -1,9 +1,9 @@
-from flask import flash, g, redirect, render_template, request, session, url_for
+from flask import abort, flash, g, redirect, render_template, request, session, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 from app import app, bcrypt, db, login_manager
 
-from .forms import CreateUserForm, LoginForm, ProductForm
+from .forms import ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm
 from .models import Client, Employee, Product, Order, OrderItem, User
 
 from helpers import add_error
@@ -85,6 +85,15 @@ def clients():
 def users():
     userlist = User.query.filter_by(active=True).all()
     return render_template('users.html', title='All Current Users', users=userlist)
+
+@app.route('/employee/<user_id>/')
+def employee(user_id):
+    emp = Employee.query.filter_by(user_id=user_id).first()
+    if emp is None:
+        abort(404)
+    return render_template('employee.html',
+                           title = 'Employee - %s' % (emp.username),
+                           employee=emp) 
 
 
 ###############################################################################
