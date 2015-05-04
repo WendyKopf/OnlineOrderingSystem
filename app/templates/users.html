@@ -18,7 +18,11 @@
       <td>{{ user.username }}</td>
       <td>{{ user.active }}</td>
       <td>{{ user.is_employee }}</td>
-      <td><a class="btn btn-primary" href="/users/{{ user.username }}/">Edit</a></td>
+      {% if user.is_employee %}
+	<td><a class="btn btn-primary" href="/employee/{{ user.id }}/">View</a></td>
+      {% else %}
+	<td><a class="btn btn-primary" href="/client/{{ user.id }}/">View</a></td>
+      {% endif %}
     </tr>
 {% endif %}
 {% endfor %}
