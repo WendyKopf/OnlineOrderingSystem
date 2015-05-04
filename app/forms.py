@@ -4,6 +4,7 @@ from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.validators import DataRequired, Length
 
 import models
+from app import db
 
 
 class CreateUserForm(Form):
@@ -16,5 +17,13 @@ class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     password = StringField('Password', validators=[DataRequired()])
 
-#EmployeeForm = model_form(models.Employee, base_class=Form, exclude_pk=True) 
+ClientForm = model_form(models.Client,
+                        base_class=Form, 
+                        db_session=db.session,
+                        exclude=['password_hash']) 
+EmployeeForm = model_form(models.Employee,
+                          base_class=Form,
+                          db_session=db.session,
+                          exclude=['password_hash']) 
+
 ProductForm  = model_form(models.Product, base_class=Form)

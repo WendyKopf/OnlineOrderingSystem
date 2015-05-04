@@ -35,15 +35,13 @@ class CreateAdminScript(Command):
         password_hash = bcrypt.generate_password_hash(password)
 
         # Attempt to save in DB
-        user = models.User(username=username,
-                           password_hash=password_hash,
-                           active=True, is_employee=True)
         employee = models.Employee(username=username,
+                                   password_hash=password_hash,
+                                   active=True, is_employee=True,
                                    managed_by=None,
                                    commission=models.DEFAULT_DIRECTOR_COMMISSION,
                                    max_discount=models.DEFAULT_DIRECTOR_MAX_DISCOUNT,
                                    title='Director')
-        db.session.add(user)
         db.session.add(employee)
         db.session.commit()
 

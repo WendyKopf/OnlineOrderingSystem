@@ -5,7 +5,9 @@ USERNAME_MAX_LEN = 32
 PASSWORD_MIN_LEN = 10
 
 class User(db.Model):
-    username = db.Column(db.String(USERNAME_MAX_LEN), primary_key=True)
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(USERNAME_MAX_LEN), unique=True)
     password_hash = db.Column(db.Binary(60), nullable=False)
     is_employee = db.Column(db.Boolean, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
@@ -24,8 +26,12 @@ class User(db.Model):
         return '<User %r>' % (self.username)
 
 class Client(User):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(USERNAME_MAX_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
+    __tablename__ = 'client'
+    client_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('user.id'),
+                        nullable=False,
+                        unique=True)
     company = db.Column(db.String(64), nullable=False)
 
     def __repr__(self):
@@ -36,14 +42,21 @@ DEFAULT_DIRECTOR_COMMISSION     = 0.05
 DEFAULT_DIRECTOR_MAX_DISCOUNT   = 0.20
 
 class Employee(User):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(USERNAME_MAX_LEN), db.ForeignKey('user.username'), nullable=False, unique=True)
-    managed_by = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)
+    __tablename__ = 'employee'
+    employee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('user.id'),
+                        nullable=False,
+                        unique=True)
+    managed_by = db.Column(db.Integer, db.ForeignKey('employee.employee_id'), nullable=True)
     commission = db.Column(db.Float, nullable=False)
     max_discount = db.Column(db.Float, nullable=False)
     title = db.Column(db.Enum('Director', 'Manager', 'Salesperson'), nullable=False)
 
-    manager = db.relation('Employee', foreign_keys=[managed_by], remote_side=[id], backref=db.backref('direct_reports'))
+    manager = db.relation('Employee',
+                          foreign_keys=[managed_by],
+                          remote_side=[employee_id],
+                          backref=db.backref('direct_reports'))
 
     @property
     def sales_total(self):
@@ -62,8 +75,8 @@ class Product(db.Model):
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False)
-    client = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
-    salesperson = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
+    client = db.Column(db.Integer, db.ForeignKey('client.client_id'), nullable=False)
+    salesperson = db.Column(db.Integer, db.ForeignKey('employee.employee_id'), nullable=False)
     commission = db.Column(db.Float, nullable=False)
 
     _sold_by = db.relationship('Employee', backref=db.backref('orders', lazy='dynamic'))
