@@ -94,7 +94,14 @@ def employee(user_id):
     return render_template('employee.html',
                            title = 'Employee - %s' % (emp.username),
                            employee=emp) 
-
+@app.route('/client/<user_id>/')
+def client(user_id):
+    cli = Client.query.filter_by(user_id=user_id).first()
+    if cli is None:
+        abort(404)
+    return render_template('client.html',
+                           title = 'Client - %s' % (cli.username),
+                           client=cli) 
 
 ###############################################################################
 # Demo screens
