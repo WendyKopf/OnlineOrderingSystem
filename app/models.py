@@ -33,6 +33,7 @@ class Client(User):
                         nullable=False,
                         unique=True)
     company = db.Column(db.String(64), nullable=False)
+    salesperson_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
 
     def __repr__(self):
         return '<Client id: %i, username: %r>' % (self.id, self.username)
@@ -57,6 +58,8 @@ class Employee(User):
                           foreign_keys=[managed_by],
                           remote_side=[employee_id],
                           backref=db.backref('direct_reports'))
+    clients = db.relation('Client', foreign_keys=[Client.salesperson_id],
+                          backref=db.backref('salesperson'))
 
     @property
     def sales_total(self):
