@@ -65,15 +65,12 @@ def add_user():
             user.password_hash = unicode(bcrypt.generate_password_hash(form.password1.data))
             user.active = True
             user.is_employee = form.is_employee.data
-            print 'username : %s, passowrd: %s, is_active: %s, is_employee %s' % (user.username, user.password_hash, user.is_active, user.is_employee)
             db.session.add(user)
             db.session.commit()
             flash('User added successfully')
             return redirect('/users/')
         else:
             flash('Passwords do not match')
-    if form.errors:
-        print form.errors
     return render_template('add_user.html', title=title, form=form)
 
 @app.route('/clients/', methods=['GET', 'POST'])
