@@ -1,4 +1,5 @@
 import datetime
+from functools import wraps
 
 from flask import abort, flash, g, redirect, render_template, request, session, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
@@ -42,9 +43,25 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+def employees_only(titles=None):
+    """A decorator to limit page access to employees."""
+    def employee_wrapper(view_func):
+        @wraps(view_func)
+        def wrapped(*args, **kwargs):
+            if not current_user.is_employee:
+                abort(401)
+            if titles is not None:
+                emp = Employee.query.filter_by(user_id=current_user.id).first()
+                if emp is None:
+                    abort(503)
+                if emp.title not in titles:
+                    abort(401)
+            return view_func(*args, **kwargs)
+        return wrapped
+    return employee_wrapper
 
 ###############################################################################
-# Application views 
+# Dashboard 
 ###############################################################################
 @app.route('/')
 @login_required
@@ -78,10 +95,21 @@ def client_dashboard():
                            title='Home',
                            products=products)
 
+###############################################################################
+# User Management
+###############################################################################
+@app.route('/users/')
+@employees_only(['Director'])
+@login_required
+def users():
+    # TODO: Make only accesible by directors
+    userlist = User.query.filter_by(active=True).all()
+    return render_template('users.html', title='All Current Users', users=userlist)
+
 @app.route('/users/add/', methods=['GET', 'POST'])
+@employees_only(['Director'])
 @login_required
 def add_user():
-    # TODO: Make only accessible by Directors
     form = CreateUserForm()
     title = 'Add User'
 
@@ -102,17 +130,20 @@ def add_user():
             flash('Passwords do not match')
     return render_template('add_user.html', title=title, form=form)
 
+
 @app.route('/clients/', methods=['GET', 'POST'])
+@login_required
+@employees_only()
 def clients():
-    # TODO: Make only accessible by employees
     # TODO: Only list clients that are assigned to salesperson or one a
     #       a director/manager manages.
     title = 'All Clients'
     return render_template('clients.html', title=title)
 
 @app.route('/client/<user_id>/')
+@employees_only()
+@login_required
 def client(user_id):
-    # TODO: Make only accessible by employees
     # TODO: Only list clients that are assigned to salesperson or one a
     #       a director/manager manages.
     cli = Client.query.filter_by(user_id=user_id).first()
@@ -122,15 +153,11 @@ def client(user_id):
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
     
-@app.route('/users/')
-def users():
-    # TODO: Make only accesible by directors
-    userlist = User.query.filter_by(active=True).all()
-    return render_template('users.html', title='All Current Users', users=userlist)
 
 @app.route('/employee/<user_id>/')
+@employees_only()
+@login_required
 def employee(user_id):
-    # TODO: Make only accessible by employees
     # TODO: Only list employees that are managed by that employee.
     emp = Employee.query.filter_by(user_id=user_id).first()
     if emp is None:
@@ -138,6 +165,49 @@ def employee(user_id):
     return render_template('employee.html',
                            title = 'Employee - %s' % (emp.username),
                            employee=emp) 
+
+###############################################################################
+# Products / Inventory 
+###############################################################################
+@app.route('/products/')
+@login_required
+def products():
+    if current_user.is_employee:
+        return employee_products()
+    return client_products()
+
+def employee_products():
+    emp = Employee.query.filter_by(user_id=current_user.id).first()
+    if emp is None:
+        abort(503)
+    all_products = Product.query.all()
+    if emp.title == 'Director':
+        products = all_products
+    else:
+        products = [p for p in all_products if p.active]
+    return render_template('employee_products.html',
+                           title='Products',
+                           employee=emp,
+                           products=products)
+def client_products():
+    cli = Client.query.filter_by(user_id=current_user.id).first()
+    if cli is None:
+        abort(503)
+    products = Product.query.filter_by(active=True).all()
+    return render_template('client_products.html',
+                           title='Products',
+                           products=products)
+
+@app.route('/product/reorder/<int:product_id>/')
+@login_required
+@employees_only(['Director'])
+def reorder_product(product_id):
+    product = Product.query.filter_by(id=product_id).filter_by(active=True).first()
+    if product is None:
+        abort(404)
+    return render_template('reorder_product.html',
+                           title='Reorder %s' % (product.name),
+                           product=product)
 
 ###############################################################################
 # Demo screens
