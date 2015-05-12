@@ -21,7 +21,11 @@ class User(db.Model):
     def is_anonymous(self):
         return False
     def is_authenticated(self):
-        return True 
+        return True
+    def employee_title(self):
+        if self.is_employee:
+            return Employee.query.filter_by(user_id=self.id).first().title
+        return None
     def __repr__(self):
         return '<User %r>' % (self.username)
 
