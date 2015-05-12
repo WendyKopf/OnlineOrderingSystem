@@ -78,15 +78,10 @@ def client_dashboard():
                            title='Home',
                            products=products)
 
-@app.route('/index')
-@login_required
-def index():
-    return render_template('index.html',
-                           title='Home')
-
 @app.route('/users/add/', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def add_user():
+    # TODO: Make only accessible by Directors
     form = CreateUserForm()
     title = 'Add User'
 
@@ -109,30 +104,40 @@ def add_user():
 
 @app.route('/clients/', methods=['GET', 'POST'])
 def clients():
+    # TODO: Make only accessible by employees
+    # TODO: Only list clients that are assigned to salesperson or one a
+    #       a director/manager manages.
     title = 'All Clients'
     return render_template('clients.html', title=title)
-    
-@app.route('/users/')
-def users():
-    userlist = User.query.filter_by(active=True).all()
-    return render_template('users.html', title='All Current Users', users=userlist)
 
-@app.route('/employee/<user_id>/')
-def employee(user_id):
-    emp = Employee.query.filter_by(user_id=user_id).first()
-    if emp is None:
-        abort(404)
-    return render_template('employee.html',
-                           title = 'Employee - %s' % (emp.username),
-                           employee=emp) 
 @app.route('/client/<user_id>/')
 def client(user_id):
+    # TODO: Make only accessible by employees
+    # TODO: Only list clients that are assigned to salesperson or one a
+    #       a director/manager manages.
     cli = Client.query.filter_by(user_id=user_id).first()
     if cli is None:
         abort(404)
     return render_template('client.html',
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
+    
+@app.route('/users/')
+def users():
+    # TODO: Make only accesible by directors
+    userlist = User.query.filter_by(active=True).all()
+    return render_template('users.html', title='All Current Users', users=userlist)
+
+@app.route('/employee/<user_id>/')
+def employee(user_id):
+    # TODO: Make only accessible by employees
+    # TODO: Only list employees that are managed by that employee.
+    emp = Employee.query.filter_by(user_id=user_id).first()
+    if emp is None:
+        abort(404)
+    return render_template('employee.html',
+                           title = 'Employee - %s' % (emp.username),
+                           employee=emp) 
 
 ###############################################################################
 # Demo screens
