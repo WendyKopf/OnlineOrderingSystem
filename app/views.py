@@ -1,3 +1,5 @@
+import datetime
+
 from flask import abort, flash, g, redirect, render_template, request, session, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
@@ -30,7 +32,7 @@ def login():
         if bcrypt.check_password_hash(saved_hash, form.password.data):
             current_user._authenticated = True
             login_user(user, remember=True)
-            return redirect(request.args.get('next') or url_for('index'))
+            return redirect(request.args.get('next') or url_for('dashboard'))
         flash('Invalid credentials')
     return render_template('login.html', form=form)
 
@@ -44,6 +46,38 @@ def logout():
 ###############################################################################
 # Application views 
 ###############################################################################
+@app.route('/')
+@login_required
+def dashboard():
+    if current_user.is_employee:
+        return employee_dashboard()
+    return client_dashboard()
+
+def employee_dashboard():
+    emp = Employee.query.filter_by(user_id=current_user.id).first()
+    if emp is None:
+        abort(404)
+    if emp.title == 'Salesperson':
+        return render_template('salesperson_dashboard.html')
+    else:
+        direct_reports = sorted(emp.direct_reports,
+                                key=lambda employee: employee.sales_total)
+        low_sales = direct_reports[:3]
+        top_sales = reversed(direct_reports[-3:])
+        return render_template('manager_dashboard.html',
+                               title='Home',
+                               low_sales=low_sales,
+                               top_sales=top_sales)
+
+def client_dashboard():
+    cli = Client.query.filter_by(user_id=current_user.id).first()
+    if cli is None:
+        abort(404)
+    products = popular_products(cli.client_id)
+    return render_template('client_dashboard.html',
+                           title='Home',
+                           products=products)
+
 @app.route('/index')
 @login_required
 def index():
@@ -103,7 +137,6 @@ def client(user_id):
 ###############################################################################
 # Demo screens
 ###############################################################################
-import datetime
 from collections import defaultdict
 
 def popular_products(customer_id):
@@ -205,26 +238,7 @@ def order(order_id):
                            title='Order Details',
                            items=items)
 
-@app.route('/')
-@app.route('/demo/dashboard/customer/')
-def customer_dashboard():
-    products = popular_products(1)
-    return render_template('demo_customer_dashboard.html',
-                           title='Home',
-                           products=products)
 
-@app.route('/demo/dashboard/manager/')
-def manager_dashboard():
-    direct_reports = sorted(Employee.query.filter_by(id=1).first().direct_reports,
-                            key=lambda employee: employee.sales_total)
-    print [(e.username, e.sales_total) for e in direct_reports]
-    low_sales = direct_reports[:3]
-    top_sales = reversed(direct_reports[-3:])
-
-    return render_template('demo_manager_dashboard.html',
-                           title='Home',
-                           low_sales=low_sales,
-                           top_sales=top_sales)
 
 def add_to_cart(product, quantity):
     if 'cart' not in session:

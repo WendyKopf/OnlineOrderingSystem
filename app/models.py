@@ -68,7 +68,7 @@ class Employee(User):
         return '<Employee id: %i, username: %r>' % (self.id, self.username)
 
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     manufacturer = db.Column(db.String(64), nullable=False)
     name = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -76,7 +76,7 @@ class Product(db.Model):
     active = db.Column(db.Boolean, nullable=False)
 
 class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     timestamp = db.Column(db.DateTime, nullable=False)
     client = db.Column(db.Integer, db.ForeignKey('client.client_id'), nullable=False)
     salesperson = db.Column(db.Integer, db.ForeignKey('employee.employee_id'), nullable=False)
