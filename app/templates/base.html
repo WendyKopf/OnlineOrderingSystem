@@ -1,3 +1,10 @@
+{% if current_user.is_employee %}
+  {% set is_employee = True -%}
+  {% set employee_title = current_user.employee_title() -%}
+{% else %}
+  {% set is_employee = False -%}
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -45,6 +52,16 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="/">Home</a></li>
+            {% if is_employee and employee_title == 'Director' %}
+            <li><a href="/users/">Manage Users</a></li>
+            {% endif %}
+            {% if is_employee %}
+            <li><a href="/clients/">Clients</a></li>
+            <li><a href="/sales/">Sales</a></li>
+            {% else %}
+            <li><a href="/orders/">Order History</a></li>
+            {% endif %}
+            <li><a href="/products/">Products</a></li>
           </ul>
         </div>
       </div>
