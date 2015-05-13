@@ -96,7 +96,8 @@ class Order(db.Model):
     salesperson = db.Column(db.Integer, db.ForeignKey('employee.employee_id'), nullable=False)
     commission = db.Column(db.Float, nullable=False)
 
-    _sold_by = db.relationship('Employee', backref=db.backref('orders', lazy='dynamic'))
+    sold_by = db.relationship('Employee', backref=db.backref('orders', lazy='dynamic'))
+    sold_to = db.relationship('Client', backref=db.backref('orders', lazy='dynamic'))
 
     @property
     def total(self):

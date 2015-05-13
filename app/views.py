@@ -12,7 +12,7 @@ from .forms import (
 )
 from .models import Client, Employee, Product, Order, OrderItem, User
 
-from helpers import add_error
+from helpers import add_error, flatten_hierarchy
 
 
 ###############################################################################
@@ -168,6 +168,22 @@ def employee(user_id):
     return render_template('employee.html',
                            title = 'Employee - %s' % (emp.username),
                            employee=emp) 
+###############################################################################
+# Employee sales and orders 
+###############################################################################
+@app.route('/sales/')
+@employees_only()
+@login_required
+def sales():
+    # TODO: Needs QA - particularly worried about getting all sales in a
+    # management hierarchy
+    emp = current_user.employee
+    order_ids = flatten_hierarchy(emp,
+                                  lambda e: [order.id for order in e.orders])
+    orders = Order.query.filter(Order.id.in_(tuple(order_ids))).all()
+    return render_template('sales.html',
+                           title='Sales',
+                           orders=orders)
 
 ###############################################################################
 # Products / Inventory 
