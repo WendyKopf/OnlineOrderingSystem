@@ -6,7 +6,10 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 
 from app import app, bcrypt, db, login_manager
 
-from .forms import ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm
+from .forms import (
+    ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm,
+    ReorderProductForm
+)
 from .models import Client, Employee, Product, Order, OrderItem, User
 
 from helpers import add_error
@@ -198,15 +201,26 @@ def client_products():
                            title='Products',
                            products=products)
 
-@app.route('/product/reorder/<int:product_id>/')
+@app.route('/product/reorder/<int:product_id>/', methods=['GET', 'POST'])
 @login_required
 @employees_only(['Director'])
 def reorder_product(product_id):
     product = Product.query.filter_by(id=product_id).filter_by(active=True).first()
     if product is None:
         abort(404)
+    form = ReorderProductForm(obj=product, exclude='active')
+    if form.validate_on_submit():
+        new_quantity = form.quantity.data
+        if new_quantity < product.quantity:
+            flash('New quantity must be greater than current quantity')
+        else:
+            product.quantity = new_quantity
+            db.session.commit()
+            flash('Product quantity updated')
+            return redirect(url_for('products'))
     return render_template('reorder_product.html',
                            title='Reorder %s' % (product.name),
+                           form=form,
                            product=product)
 
 ###############################################################################

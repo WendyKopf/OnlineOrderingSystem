@@ -27,3 +27,4 @@ EmployeeForm = model_form(models.Employee,
                           exclude=['password_hash']) 
 
 ProductForm  = model_form(models.Product, base_class=Form)
+ReorderProductForm  = model_form(models.Product, base_class=Form, exclude=['active'])
