@@ -1,6 +1,5 @@
 {% if current_user.is_employee %}
   {% set is_employee = True -%}
-  {% set employee_title = current_user.employee_title() -%}
 {% else %}
   {% set is_employee = False -%}
 {% endif %}
@@ -52,7 +51,7 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="/">Home</a></li>
-            {% if is_employee and employee_title == 'Director' %}
+            {% if is_employee and current_user.employee.title == 'Director' %}
             <li><a href="/users/">Manage Users</a></li>
             {% endif %}
             {% if is_employee %}

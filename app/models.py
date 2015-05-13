@@ -22,6 +22,16 @@ class User(db.Model):
         return False
     def is_authenticated(self):
         return True
+    @property
+    def client(self):
+        if self.is_employee:
+            return None
+        return Client.query.filter_by(user_id=self.id).first()
+    @property
+    def employee(self):
+        if self.is_employee:
+            return Employee.query.filter_by(user_id=self.id).first()
+        return None
     def employee_title(self):
         if self.is_employee:
             return Employee.query.filter_by(user_id=self.id).first().title
