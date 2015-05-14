@@ -54,12 +54,12 @@ def index():
 #@login_required
 def add_user():
     form = CreateUserForm()
-    title = 'Add User'
+    title = 'Add Client'
 
     # Send user back to previous page if form errors exist
     if form.validate_on_submit():
         # Validate form data
-        if form.password1.data == form.password2.data:
+	if form.password1.data == form.password2.data:
             user = User()
             user.username = form.username.data
             user.password_hash = unicode(bcrypt.generate_password_hash(form.password1.data))
@@ -67,7 +67,7 @@ def add_user():
             user.is_employee = form.is_employee.data
             db.session.add(user)
             db.session.commit()
-            flash('User added successfully')
+            flash('Users added successfully')
             return redirect('/users/')
         else:
             flash('Passwords do not match')
@@ -85,7 +85,7 @@ def users():
 
 @app.route('/employee/<user_id>/')
 def employee(user_id):
-    emp = Employee.query.filter_by(user_id=user_id).first()
+    emp = Employee.query.filter_by(user_id = user_id).first() 
     if emp is None:
         abort(404)
     return render_template('employee.html',
@@ -93,9 +93,9 @@ def employee(user_id):
                            employee=emp) 
 @app.route('/client/<user_id>/')
 def client(user_id):
-    cli = Client.query.filter_by(user_id=user_id).first()
+    cli = User.query.filter_by(id = user_id).first()
     if cli is None:
-        abort(404)
+       abort(404)
     return render_template('client.html',
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
