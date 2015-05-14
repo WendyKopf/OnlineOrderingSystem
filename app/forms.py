@@ -12,22 +12,19 @@ class CreateUserForm(Form):
     password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
     password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
     is_employee = BooleanField('Employee?')
-    
-#class AddClientForm(Form):
-    #client_id      = StringField('Username', validators=[DataRequired()])
-    #salesperson_id = StringField('Assigned Salesperson', validators =[DataRequired()]
-    #company        = StringField('Company Name' , validators = [DataRequired()]
-    #password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
-    #password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
 
-class AddEmployeeForm(Form):
-    username = StringField('Username', validators =[DataRequired()])
+EmployeeForm = model_form(models.Employee,
+                          base_class=Form,
+                          db_session=db.session,
+                          exclude=['password_hash', 'is_employee', 'active']) 
+
+class AddEmployeeForm(EmployeeForm):
     password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
     password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
-    managedBy = StringField('Managed by', validators =[DataRequired()])
+    managed_by = SelectField('ManagedBy',coerce=int)
     commission = StringField('Commission' , validators = [DataRequired()])
-    maxDiscount = StringField('Max Discount' , validators =[DataRequired()])
-    title = StringField('Title' , validators =[DataRequired()])
+    max_discount = StringField('Max Discount' , validators =[DataRequired()])
+    title = SelectField(u'title', choices=[('Director', 'Director'), ('Manager', 'Manager'), ('Salesperson', 'Salesperson')])
     
     
 class LoginForm(Form):
@@ -44,10 +41,7 @@ class AddClientForm(ClientForm):
     salesperson_id = SelectField(u'Salesperson', coerce=int)
 
 
-EmployeeForm = model_form(models.Employee,
-                          base_class=Form,
-                          db_session=db.session,
-                          exclude=['password_hash']) 
+
 
 ProductForm  = model_form(models.Product,
                           base_class=Form,

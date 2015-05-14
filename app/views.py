@@ -141,7 +141,8 @@ def add_user():
 def add_employee():
     form = AddEmployeeForm()
     title = 'Add Employee'
-
+    managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
+    form.managed_by.choices = managedBy
     # Send user back to previous page if form errors exist
     if form.validate_on_submit():
         # Validate form data
@@ -151,16 +152,17 @@ def add_employee():
             user.password_hash = unicode(bcrypt.generate_password_hash(form.password1.data))
             user.active = True
 	    user.is_employee = True
-	    user.managed_by = form.managedBy.data
+	    user.managed_by = form.managed_by.data
 	    user.title = form.title.data
 	    user.commission = form.commission.data
-	    user.max_discount = form.maxDiscount.data
+	    user.max_discount = form.max_discount.data
             db.session.add(user)
             db.session.commit()
             flash('Employee added successfully')
             return redirect('/employees/')
         else:
 	    flash('Passwords do not match')
+    flash_errors(form)
     return render_template('add_employee.html', title=title, form=form)
     
 
@@ -179,10 +181,7 @@ def clients():
 @login_required
 @employees_only()
 def employees():
-    # TODO: Only list clients that are assigned to salesperson or one a
-    #       a director/manager manages.
-    employees = flatten_hierarchy(current_user.employee,
-                                lambda employee: employee.clients)
+    employees = Employee.query.filter(Employee.title!='Salesperson').all()
     title = 'All Employees'
     return render_template('employees.html', title=title, employees=employees)
 
@@ -224,12 +223,12 @@ def add_client():
 
     
 
-@app.route('/employee/<user_id>/')
+@app.route('/employee/<employee_id>/')
 @employees_only()
 @login_required
-def employee(user_id):
+def employee(employee_id):
     # TODO: Only list employees that are managed by that employee.
-    emp = Employee.query.filter_by(user_id=user_id).first()
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
     if emp is None:
         abort(404)
     return render_template('employee.html',
