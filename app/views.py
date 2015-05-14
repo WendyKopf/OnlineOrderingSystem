@@ -142,8 +142,10 @@ def add_user():
 def clients():
     # TODO: Only list clients that are assigned to salesperson or one a
     #       a director/manager manages.
+    clients = flatten_hierarchy(current_user.employee,
+                                lambda employee: employee.clients)
     title = 'All Clients'
-    return render_template('clients.html', title=title)
+    return render_template('clients.html', title=title, clients=clients)
 
 @app.route('/client/<user_id>/')
 @employees_only()
