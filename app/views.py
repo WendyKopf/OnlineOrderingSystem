@@ -78,7 +78,9 @@ def employee_dashboard():
     if emp is None:
         abort(404)
     if emp.title == 'Salesperson':
-        return render_template('salesperson_dashboard.html')
+        popular_products = popular_salesperson_products(emp)
+        return render_template('salesperson_dashboard.html',
+                               products=popular_products)
     else:
         direct_reports = sorted(emp.direct_reports,
                                 key=lambda employee: employee.sales_total)
@@ -93,7 +95,7 @@ def client_dashboard():
     cli = Client.query.filter_by(user_id=current_user.id).first()
     if cli is None:
         abort(404)
-    products = popular_products(cli.client_id)
+    products = popular_customer_products(cli.client_id)
     return render_template('client_dashboard.html',
                            title='Home',
                            products=products)
@@ -265,7 +267,7 @@ def add_product():
 ###############################################################################
 from collections import defaultdict
 
-def popular_products(customer_id):
+def popular_customer_products(customer_id):
     all_counter = defaultdict(int)
     cust_counter = defaultdict(int)
     for item in OrderItem.query.all():
@@ -280,7 +282,18 @@ def popular_products(customer_id):
        counter = all_counter
 
     product_ids = [k for (k, v) in sorted(counter.items(), key=lambda (k, v): v)][:3]
-    return [p for p in Product.query.all() if p.id in product_ids] 
+    return [p for p in Product.query.all() if p.id in product_ids]
+
+def popular_salesperson_products(employee):
+    counter = defaultdict(int) 
+    for order in employee.orders:
+        for item in order.items:
+            if item.product.active:
+                counter[item.product.id] += item.quantity
+    popular = sorted(counter.keys(), 
+                     key=lambda item_id: counter[item_id],
+                     reverse=True)[:3]
+    return Product.query.filter(Product.id.in_(tuple(popular))).all()
 
 @app.route('/demo/buy/')
 def buy():
