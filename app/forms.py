@@ -19,14 +19,17 @@ class CreateUserForm(Form):
     #company        = StringField('Company Name' , validators = [DataRequired()]
     #password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
     #password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
-    
-#I think we should have a secondary page once the add user page is submitted
-#for specialization into the database.
-#for instance, adding a user, then if the employee checkbox is selected, then the 
-#add user would be rerouted to a second form with specifics for employee info
-# loginform-> isemployee->yes -> employee specific page to add manager/commission/etc.
-#                       ->no  -> client specific page to add salesperson/company/etc.
 
+class AddEmployeeForm(Form):
+    username = StringField('Username', validators =[DataRequired()])
+    password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
+    password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
+    managedBy = StringField('Managed by', validators =[DataRequired()])
+    commission = StringField('Commission' , validators = [DataRequired()])
+    maxDiscount = StringField('Max Discount' , validators =[DataRequired()])
+    title = StringField('Title' , validators =[DataRequired()])
+    
+    
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     password = StringField('Password', validators=[DataRequired()])

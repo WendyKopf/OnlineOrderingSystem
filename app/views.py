@@ -7,7 +7,7 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from app import app, bcrypt, db, login_manager
 
 from .forms import (
-    AddClientForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm,
+    AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm,
     ReorderProductForm
 )
 from .models import Client, Employee, Product, Order, OrderItem, User
@@ -135,6 +135,34 @@ def add_user():
             flash('Passwords do not match')
     return render_template('add_user.html', title=title, form=form)
 
+@app.route('/employee/add/', methods=['GET', 'POST'])
+@employees_only(['Director'])
+@login_required
+def add_employee():
+    form = AddEmployeeForm()
+    title = 'Add Employee'
+
+    # Send user back to previous page if form errors exist
+    if form.validate_on_submit():
+        # Validate form data
+        if form.password1.data == form.password2.data:
+            user = Employee()
+            user.username = form.username.data
+            user.password_hash = unicode(bcrypt.generate_password_hash(form.password1.data))
+            user.active = True
+	    user.is_employee = True
+	    user.managed_by = form.managedBy.data
+	    user.title = form.title.data
+	    user.commission = form.commission.data
+	    user.max_discount = form.maxDiscount.data
+            db.session.add(user)
+            db.session.commit()
+            flash('Employee added successfully')
+            return redirect('/employees/')
+        else:
+	    flash('Passwords do not match')
+    return render_template('add_employee.html', title=title, form=form)
+    
 
 @app.route('/clients/', methods=['GET', 'POST'])
 @login_required
@@ -146,6 +174,17 @@ def clients():
                                 lambda employee: employee.clients)
     title = 'All Clients'
     return render_template('clients.html', title=title, clients=clients)
+
+@app.route('/employees/', methods=['GET', 'POST'])
+@login_required
+@employees_only()
+def employees():
+    # TODO: Only list clients that are assigned to salesperson or one a
+    #       a director/manager manages.
+    employees = flatten_hierarchy(current_user.employee,
+                                lambda employee: employee.clients)
+    title = 'All Employees'
+    return render_template('employees.html', title=title, employees=employees)
 
 @app.route('/client/<user_id>/')
 @employees_only()
