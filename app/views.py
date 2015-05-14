@@ -12,7 +12,7 @@ from .forms import (
 )
 from .models import Client, Employee, Product, Order, OrderItem, User
 
-from helpers import add_error, flatten_hierarchy
+from helpers import add_error, flash_errors, flatten_hierarchy
 
 
 ###############################################################################
@@ -234,11 +234,32 @@ def reorder_product(product_id):
             db.session.commit()
             flash('Product quantity updated')
             return redirect(url_for('products'))
+    flash_errors(form)
     return render_template('reorder_product.html',
                            title='Reorder %s' % (product.name),
                            form=form,
                            product=product)
 
+@employees_only(['Director'])
+@login_required
+@app.route('/products/add/', methods=['GET', 'POST'])
+def add_product():
+    form = ProductForm()
+    if form.validate_on_submit():
+        product = Product(manufacturer=form.manufacturer.data,
+                          name=form.name.data,
+                          price=form.price.data,
+                          quantity=form.quantity.data,
+                          active=True)
+        db.session.add(product)
+        db.session.commit()
+        flash('Product added')
+        return redirect(url_for('products'))
+
+    flash_errors(form)
+    return render_template('add_product.html',
+                           title='Add Product',
+                           form=form)
 ###############################################################################
 # Demo screens
 ###############################################################################

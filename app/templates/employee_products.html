@@ -31,4 +31,7 @@
 {% endfor %}
   </tbody>
 </table>
+{% if employee.title == 'Director' %}
+<a class="btn btn-primary" href="/products/add/">Add Product</a>
+{% endif %}
 {% endblock %}
