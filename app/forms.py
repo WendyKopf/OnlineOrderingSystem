@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import BooleanField, StringField, PasswordField
+from wtforms import BooleanField, SelectField, StringField, PasswordField
 from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.validators import DataRequired, Length, NumberRange
 
@@ -34,7 +34,13 @@ class LoginForm(Form):
 ClientForm = model_form(models.Client,
                         base_class=Form, 
                         db_session=db.session,
-                        exclude=['password_hash']) 
+                        exclude=['password_hash', 'is_employee', 'active'])
+class AddClientForm(ClientForm):
+    password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
+    password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
+    salesperson_id = SelectField(u'Salesperson', coerce=int)
+
+
 EmployeeForm = model_form(models.Employee,
                           base_class=Form,
                           db_session=db.session,

@@ -7,7 +7,7 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from app import app, bcrypt, db, login_manager
 
 from .forms import (
-    ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm,
+    AddClientForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm,
     ReorderProductForm
 )
 from .models import Client, Employee, Product, Order, OrderItem, User
@@ -159,6 +159,30 @@ def client(user_id):
     return render_template('client.html',
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
+
+@app.route('/client/add/', methods=['GET', 'POST'])
+@employees_only(['Director']) # TODO: should managers be able to do this?
+@login_required
+def add_client():
+    form = AddClientForm()
+    all_reports = flatten_hierarchy(current_user.employee, lambda e: [e])
+    salesperson_ids = [(s.employee_id, s.username) for s in all_reports if s.title == 'Salesperson'] 
+    form.salesperson_id.choices = salesperson_ids
+    if form.validate_on_submit():
+        cli = Client()
+        cli.username = form.username.data
+        cli.password_hash = unicode(bcrypt.generate_password_hash(form.password1.data))
+        cli.active = True
+        cli.is_employee = False
+        cli.company = form.company.data
+        cli.salesperson_id = form.salesperson_id.data
+        db.session.add(cli)
+        db.session.commit()
+        flash('Client added successfully')
+        return redirect(url_for('clients'))
+    flash_errors(form)
+    return render_template('add_client.html', title='Add Client', form=form)
+
     
 
 @app.route('/employee/<user_id>/')

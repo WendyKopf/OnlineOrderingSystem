@@ -58,6 +58,19 @@
 </div>
 {% endmacro %}
 
+{% macro select_field(field) -%}
+<div class="form-group">
+  <label class="col-sm-2 control-label">{{ field.label }}</label>
+  <div class="col-sm-10">
+    <select class="form-control" id="{{ field.id }}" name="{{ field.id }}">
+      {% for (value, label) in field.choices %}
+      <option value="{{ value }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+{% endmacro %}
+
 {% macro checkbox(form) -%}
 <div class="form-group">
   <div class="checkbox">
