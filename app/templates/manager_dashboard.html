@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Sales Team Report</h1>
+
+<table class="table">
+  <caption>Highest Sales</caption>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Total Sales</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for person in top_sales %}
+    <tr>
+      <td>{{ person.username }}</td>
+      <td>{{ '$%.2f' % person.sales_total }}</td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+
+<table class="table">
+  <caption>Lowest Sales</caption>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Total Sales</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for person in low_sales %}
+    <tr>
+      <td>{{ person.username }}</td>
+      <td>{{ '$%.2f' % person.sales_total }}</td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

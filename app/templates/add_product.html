@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Add Product</h1>
+<form class="form-horizontal" method="post" name="add_product">
+  {{ form.hidden_tag() }}
+  {{ forms.text_field(form.manufacturer) }}
+  {{ forms.text_field(form.name) }}
+  {{ forms.text_field(form.price) }}
+  {{ forms.text_field(form.quantity) }}
+  {{ forms.submit_button("Submit") }}
+</form>
+{% endblock %}

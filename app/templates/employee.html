@@ -12,7 +12,8 @@
   </div>
   <div class="row">
     {% if employee.title != 'Director' %}
-    <div class="col-sm-2">{{ employee.manager }}</div>
+    <div class="col-sm-2">Manager</div>
+    <div class="col-sm-2">{{ employee.manager.username }}</div>
     {% endif %}
   </div>
   <div class="row">
