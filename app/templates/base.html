@@ -46,8 +46,9 @@
           <ul class="nav nav-sidebar">
             {% if current_user.is_authenticated() %}
             <li><a href="/">Home</a></li>
-            {% if current_user.is_employee and current_user.employee.title == 'Director' %}
-            <li><a href="/users/">Manage Users</a></li>
+            {% if current_user.is_employee and 
+                  current_user.employee.title in ['Director', 'Manager'] %}
+            <li><a href="/employees/">Employees</a></li>
             {% endif %}
             {% if current_user.is_employee %}
             <li><a href="/clients/">Clients</a></li>
