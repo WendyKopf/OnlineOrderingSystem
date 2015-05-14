@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Current Users</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>User Name</th>
+      <th>Salesperson</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+{% for client in clients %}
+    <tr>
+      <td>{{ client.company }}</td>
+      <td>{{ client.username }}</td>
+      <td>{{ client.salesperson.username }}</td>
+      <td><a class="btn btn-primary" href="/client/{{ client.client_id }}/">View</a></td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+<a class="btn btn-primary" href="/client/add/">Add Client</a>
+{% endblock %}
