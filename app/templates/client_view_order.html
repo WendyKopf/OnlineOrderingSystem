@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Order Details</h1>
+<h3>Ordered on {{ order.timestamp }}</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for item in order.items %}
+    <tr>
+      <td>{{ item.product.manufacturer }}</td>
+      <td>{{ item.product.name }}</td>
+      <td>{{ '$%.2f' % item.price }}</td>
+      <td>{{ item.quantity }}</td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

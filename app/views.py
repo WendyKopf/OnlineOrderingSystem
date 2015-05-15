@@ -421,7 +421,12 @@ def view_employee_order(employee, order_id):
                            order=order)
 
 def view_client_order(client, order_id):
-    pass
+    order = Order.query.filter(Order.id==order_id).filter(Order.client==client.client_id).first()
+    if order is None:
+        abort(404)
+    return render_template('client_view_order.html',
+                           title='Order Details',
+                           order=order)
 
 @employees_only(['Salesperson'])
 @login_required
