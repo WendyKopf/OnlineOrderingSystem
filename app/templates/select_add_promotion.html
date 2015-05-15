@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">All Promotions</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Name</th>
+      <th>List Price</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+{% for product in products %}
+  <tr>
+	<td>{{ product.manufacturer }}</td>
+	<td>{{ product.name }}</td>
+	<td>{{ product.price }}</td>
+	<td><a class="btn btn-primary" href="/promotions/add/{{ product.id }}/">Add Promotion</a></td>
+  </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

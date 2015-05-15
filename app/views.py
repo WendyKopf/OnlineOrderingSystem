@@ -7,10 +7,10 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from app import app, bcrypt, db, login_manager
 
 from .forms import (
-    AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm, ProductForm,
-    ReorderProductForm
+    AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm,
+    ProductForm, PromotionForm, ReorderProductForm
 )
-from .models import Client, Employee, Product, Order, OrderItem, User
+from .models import Client, Employee, Product, Promotion, Order, OrderItem, User
 
 from helpers import add_error, flash_errors, flatten_hierarchy
 
@@ -214,7 +214,7 @@ def edit_client(client_id):
 
 
 @app.route('/client/add/', methods=['GET', 'POST'])
-@employees_only(['Director']) # TODO: should managers be able to do this?
+@employees_only(['Manager'])
 @login_required
 def add_client():
     form = AddClientForm()
@@ -353,6 +353,75 @@ def add_product():
     return render_template('add_product.html',
                            title='Add Product',
                            form=form)
+###############################################################################
+# Promotions
+###############################################################################
+@employees_only()
+@login_required
+@app.route('/promotions/')
+def promotions():
+    promotions = Promotion.query.all()
+    return render_template('promotions.html',
+                           title='All Promotions',
+                           promotions=promotions)
+
+@employees_only(['Manager'])
+@login_required
+@app.route('/promotions/add/')
+def select_add_promotion():
+    all_products = Product.query.filter_by(active=True).all()
+    promoted_products = [p.product for p in Promotion.query.all()]
+    products = [p for p in all_products if p not in promoted_products]
+    return render_template('select_add_promotion.html',
+                           title='Select Product',
+                           products=products)
+
+@employees_only(['Manager'])
+@login_required
+@app.route('/promotions/add/<int:product_id>/', methods=['GET', 'POST'])
+@app.route('/promotions/edit/<int:product_id>/', methods=['GET', 'POST'])
+def add_promotion(product_id):
+    form = PromotionForm()
+    product = Product.query.filter_by(id=product_id).first()
+    current_promotion = Promotion.query.filter_by(product_id=product.id).first()
+    if product is None:
+        abort(404)
+    if form.validate_on_submit():
+        discount = float(form.discount.data)
+        if discount > product.price:
+            flash('Discount price cannot be greater than list price')
+        elif discount <= 0:
+            flash('Discount price must be at least $0.01')
+        else:
+            if current_promotion is None:
+                current_promotion = Promotion()
+                current_promotion.product_id = product_id
+                current_promotion.discount = discount
+                db.session.add(current_promotion)
+            else:
+                current_promotion.discount = discount
+            db.session.commit()
+            flash('Promotion updated')
+            return redirect(url_for('promotions'))
+    flash_errors(form)
+    return render_template('add_promotion.html',
+                           title='Promotion for %s - %s' % (product.manufacturer, product.name),
+                           product=product,
+                           current_promotion=current_promotion,
+                           form=form)
+
+@employees_only(['Manager'])
+@login_required
+@app.route('/promotions/delete/<int:product_id>/', methods=['GET', 'POST'])
+def delete_promotion(product_id):
+    promo = Promotion.query.filter_by(product_id=product_id).first()
+    if promo is None:
+        abort(404)
+    db.session.delete(promo)
+    db.session.commit()
+    flash('Promotion deleted')
+    return redirect(url_for('promotions'))
+
 ###############################################################################
 # Demo screens
 ###############################################################################
