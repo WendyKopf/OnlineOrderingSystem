@@ -1,8 +1,10 @@
 import datetime
+import StringIO
+import csv
 from functools import wraps
 from collections import defaultdict
 
-from flask import abort, flash, g, redirect, render_template, request, session, url_for
+from flask import abort, flash, g, redirect, render_template, request, session, url_for, make_response 
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 from app import app, bcrypt, db, login_manager
@@ -592,7 +594,37 @@ def add_order(client_id):
                            client=client,
                            products=products,
                            form=form)
-                        
+
+@login_required
+@app.route('/orders/export/<int:order_id>/')
+def export_order(order_id):
+    if current_user.is_employee and current_user.employee.title != 'Salesperson':
+        abort(404)
+    elif current_user.is_employee:
+        order = Order.query.filter(Order.id==order_id, Order.salesperson==current_user.employee.employee_id).first()
+    else:
+        order = Order.query.filter(Order.id==order_id, Order.client==current_user.client.client_id).first()
+    if order is None:
+        abort(404)
+
+    f = StringIO.StringIO()
+    writer = csv.writer(f)
+    if current_user.employee:
+        writer.writerow(('Timestamp', 'Client', 'Product Manufacturer', 'Product Name', 'Price', 'Quantity'))
+        for item in order.items:
+            writer.writerow((order.timestamp, order.sold_to.username, item.product.manufacturer,
+                             item.product.name, item.product.price, item.product.quantity))
+    else:
+        writer.writerow(('Timestamp', 'Salesperson', 'Product Manufacturer', 'Product Name', 'Price', 'Quantity'))
+        for item in order.items:
+            writer.writerow((order.timestamp, order.sold_by.username, item.product.manufacturer,
+                             item.product.name, item.product.price, item.product.quantity))
+
+    response = make_response(f.getvalue())
+    response.headers["Content-Disposition"] = "attachment;filename=orders.csv"
+    f.close()
+    return response
+
 ###############################################################################
 # Feedback - Likes/Dislikes 
 ###############################################################################

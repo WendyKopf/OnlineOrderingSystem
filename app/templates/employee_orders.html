@@ -13,7 +13,7 @@
       <th>Total Amount</th>
       <th>Balance</th>
       <th></th>
-      {% if current_user.employee.title == 'Manager' %}
+      {% if current_user.employee.title in ['Manager', 'Salesperson'] %}
       <th></th>
       {% endif %}
     </tr>
@@ -30,6 +30,9 @@
       <td><a class="btn btn-primary" href="/orders/{{ order.id }}/">View</td>
       {% if current_user.employee.title == 'Manager' %}
       <td><a class="btn btn-primary" href="/orders/pay/{{ order.id }}/">Apply Payment</td>
+      {% endif %}
+      {% if current_user.employee.title == 'Salesperson' %}
+      <td><a class="btn btn-primary" href="/orders/export/{{ order.id }}/">CSV Export</td>
       {% endif %}
     </tr>
 {% endfor %}
