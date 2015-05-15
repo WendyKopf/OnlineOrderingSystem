@@ -5,12 +5,13 @@ def add_error(form, key, value):
         form.errors[key] = []
     form.errors[key].append(value)
 
-def flash_errors(form):
-    if form.errors:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash('Error - %s : %s' % (field, error))
+def flash_errors(errors):
+    for field, error_list in errors.items():
+        for error in error_list:
+            flash('Error - %s : %s' % (field, error))
 
+def flash_form_errors(form):
+    flash_errors(form.errors)
 
 def flatten_hierarchy(employee, f):
     """Walks the managements hierarchy from top to bottom and returns

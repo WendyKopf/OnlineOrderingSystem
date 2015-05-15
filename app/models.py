@@ -1,4 +1,5 @@
 from app import db
+import datetime
 
 USERNAME_MIN_LEN = 3
 USERNAME_MAX_LEN = 32
@@ -11,17 +12,27 @@ class User(db.Model):
     password_hash = db.Column(db.Binary(60), nullable=False)
     is_employee = db.Column(db.Boolean, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
+    banned = db.Column(db.Boolean, default=False)
+    last_banning = db.Column(db.DateTime)
 
     _authenticated = False 
 
     def get_id(self):
         return self.username
     def is_active(self):
-        return self.active
+        return self.active and self.banned != True 
     def is_anonymous(self):
         return False
     def is_authenticated(self):
         return True
+    def ban(self):
+        self.banned = True
+        self.last_banning = datetime.datetime.now()
+        db.session.commit()
+    def unban(self):
+        self.banned = False 
+        db.session.commit()
+
     @property
     def client(self):
         if self.is_employee:
@@ -36,6 +47,29 @@ class User(db.Model):
         if self.is_employee:
             return Employee.query.filter_by(user_id=self.id).first().title
         return None
+    @property
+    def feedback_received(self):
+        return Feedback.query.filter_by(to_user=self.id).all()
+    @property
+    def likes(self):
+        return [fb for fb in self.feedback_received if fb.is_positive]
+    @property
+    def dislikes(self):
+        return [fb for fb in self.feedback_received if not fb.is_positive]
+    @property
+    def feedback_left_since_banning(self):
+        if self.last_banning is None:
+            return Feedback.query.filter_by(from_user=self.id).limit(9).all()
+        return Feedback.query.\
+               filter(Feedback.from_user==self.id, Feedback.timestamp>self.last_banning).limit(9).all()
+    @property
+    def feedback_received_since_banning(self):
+        if self.last_banning is None:
+            return Feedback.query.filter_by(to_user=self.id).all()
+        return Feedback.query.\
+               filter(Feedback.to_user==self.id, Feedback.timestamp>self.last_banning).all()
+
+    
     def __repr__(self):
         return '<User %r>' % (self.username)
 
@@ -78,6 +112,14 @@ class Employee(User):
     @property
     def sales_total(self):
         return sum([order.total for order in self.orders])
+    @property
+    def all_reports(self):
+        reports = [r for r in self.direct_reports]
+        for r in reports:
+            reports.extend(r.all_reports)
+        return reports
+
+
     def __repr__(self):
         return '<Employee id: %i, username: %r>' % (self.id, self.username)
 
@@ -88,6 +130,17 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
+
+    @property
+    def promo_price(self):
+        promo = Promotion.query.filter_by(product_id=self.id).first()
+        if promo is None:
+            return self.price
+        return promo.discount
+    @property
+    def description(self):
+        return '%s - %s' % (self.manufacturer, self.name)
+
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -122,3 +175,7 @@ class Feedback(db.Model):
     to_user = db.Column(db.String(USERNAME_MAX_LEN), nullable=False, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, primary_key=True)
     is_positive = db.Column(db.Boolean, nullable=False)
+
+    @property
+    def left_by(self):
+        return User.query.filter_by(id=self.from_user).first()

@@ -10,8 +10,10 @@
       <th>Name</th>
       <th>List Price</th>
       <th>Discount Price</th>
+      {% if current_user.employee.title == 'Manager' %}
       <th></th>
       <th></th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -21,8 +23,10 @@
 	<td>{{ promo.product.name }}</td>
 	<td>{{ promo.product.price }}</td>
 	<td>{{ promo.discount }}</td>
+  {% if current_user.employee.title == 'Manager' %}
 	<td><a class="btn btn-primary" href="/promotions/edit/{{ promo.product_id }}/">Edit</a></td>
 	<td><a class="btn btn-primary" href="/promotions/delete/{{ promo.product_id }}/">Delete</a></td>
+  {% endif %}
   </tr>
 {% endfor %}
   </tbody>

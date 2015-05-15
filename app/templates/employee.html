@@ -28,6 +28,11 @@
     <div class="col-sm-2">
       <a class="btn btn-primary" href="/employee/edit/{{ employee.employee_id }}/">Edit</a>
     </div>
+  {% if current_user.employee.title == 'Manager' and employee.banned %}
+    <div class="col-sm-2">
+      <a class="btn btn-primary" href="/salesperson/unban/{{ employee.employee_id }}/">Un-Ban</a>
+    </div>
+  {% endif %}
   </div>
 
 {% endblock %}
