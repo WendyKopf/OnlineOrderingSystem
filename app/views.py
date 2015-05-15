@@ -201,15 +201,15 @@ def edit_employee(employee_id):
     managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
     form.managed_by.choices = managedBy
     if form.validate_on_submit():
-	emp.username = form.username.data
-	emp.active = form.active.data
-	emp.managed_by = form.managed_by.data
-	emp.title = form.title.data
-	emp.commission = form.commission.data
-	emp.max_discount = form.max_discount.data
-	db.session.commit()
-	flash('Employee updated successfully')
-	return redirect('/employees/')
+        emp.username = form.username.data
+        emp.active = form.active.data
+        emp.managed_by = form.managed_by.data
+        emp.title = form.title.data
+        emp.commission = form.commission.data
+        emp.max_discount = form.max_discount.data
+        db.session.commit()
+        flash('Employee updated successfully')
+        return redirect('/employees/')
   
     return render_template('edit_employee.html',
                            title = 'Edit Employee - %s' % (emp.username),
@@ -243,7 +243,7 @@ def client(client_id):
     return render_template('client.html',
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
-			   
+               
 
 
 #Have to create a form to fill again.
@@ -260,12 +260,12 @@ def edit_client(client_id):
     salesperson_ids = [(s.employee_id, s.username) for s in all_reports if s.title == 'Salesperson'] 
     form.salesperson_id.choices = salesperson_ids
     if form.validate_on_submit():
-	cli.salesperson_id = form.salesperson_id.data
-	cli.company = form.company.data
-	db.session.commit()
-	flash('Client updated successfully')
-	return redirect('/clients/')
-   
+        cli.salesperson_id = form.salesperson_id.data
+        cli.company = form.company.data
+        db.session.commit()
+        flash('Client updated successfully')
+        return redirect('/clients/')
+ 
     return render_template('edit_client.html',
                            title = 'Edit Client - %s' % (cli.username),
                            form=form)     
