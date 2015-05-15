@@ -36,6 +36,16 @@ class User(db.Model):
         if self.is_employee:
             return Employee.query.filter_by(user_id=self.id).first().title
         return None
+    @property
+    def feedback_received(self):
+        return Feedback.query.filter_by(to_user=self.id).all()
+    @property
+    def likes(self):
+        return [fb for fb in self.feedback_received if fb.is_positive]
+    @property
+    def dislikes(self):
+        return [fb for fb in self.feedback_received if not fb.is_positive]
+    
     def __repr__(self):
         return '<User %r>' % (self.username)
 
@@ -84,6 +94,7 @@ class Employee(User):
         for r in reports:
             reports.extend(r.all_reports)
         return reports
+
 
     def __repr__(self):
         return '<Employee id: %i, username: %r>' % (self.id, self.username)
@@ -140,3 +151,7 @@ class Feedback(db.Model):
     to_user = db.Column(db.String(USERNAME_MAX_LEN), nullable=False, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, primary_key=True)
     is_positive = db.Column(db.Boolean, nullable=False)
+
+    @property
+    def left_by(self):
+        return User.query.filter_by(id=self.from_user).first()

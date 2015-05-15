@@ -11,7 +11,7 @@ from .forms import (
     AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm,
     OrderForm, ProductForm, PromotionForm, ReorderProductForm, IntegerField
 )
-from .models import Client, Employee, Product, Promotion, Order, OrderItem, User
+from .models import Client, Employee, Feedback, Product, Promotion, Order, OrderItem, User
 
 from helpers import add_error, flash_errors, flash_form_errors, flatten_hierarchy
 
@@ -432,7 +432,8 @@ def view_client_order(client, order_id):
 @login_required
 @app.route('/orders/add/<int:client_id>/', methods=['GET', 'POST'])
 def add_order(client_id):
-    client = Client.query.filter_by(client_id=client_id).first()
+    emp_id = current_user.employee.employee_id
+    client = Client.query.filter_by(client_id=client_id, salesperson_id=emp_id).first()
     if client is None:
         abort(404)
 
@@ -510,12 +511,51 @@ def add_order(client_id):
                            products=products,
                            form=form)
                         
+###############################################################################
+# Feedback - Likes/Dislikes 
+###############################################################################
+@login_required
+@app.route('/feedback/')
+def feedback():
+    likes = current_user.likes
+    dislikes = current_user.dislikes
+    return render_template('feedback.html',
+                           title='Feedback',
+                           likes=likes,
+                           dislikes=dislikes)
+
+@login_required
+@employees_only(['Salesperson'])
+@app.route('/client/like/<int:client_user_id>/')
+def like_client(client_user_id):
+    emp = current_user.employee
+    client = Client.query.filter_by(user_id=client_user_id, salesperson_id=emp.employee_id).first()
+    if client is None:
+        abort(404)
+    db.session.add(Feedback(from_user=emp.user_id, to_user=client.user_id,
+                           timestamp=datetime.datetime.now(), is_positive=True))
+    db.session.commit()
+    flash('Like added')
+    return redirect(url_for('clients'))
+                           
+@login_required
+@employees_only(['Salesperson'])
+@app.route('/client/dislike/<int:client_user_id>/')
+def dislike_client(client_user_id):
+    emp = current_user.employee
+    client = Client.query.filter_by(user_id=client_user_id, salesperson_id=emp.employee_id).first()
+    if client is None:
+        abort(404)
+    db.session.add(Feedback(from_user=emp.user_id, to_user=client.user_id,
+                           timestamp=datetime.datetime.now(), is_positive=False))
+    db.session.commit()
+    flash('Disike added')
+    return redirect(url_for('clients'))
 
 
 ###############################################################################
 # Popular Products Helpers 
 ###############################################################################
-
 def popular_customer_products(customer_id):
     all_counter = defaultdict(int)
     cust_counter = defaultdict(int)

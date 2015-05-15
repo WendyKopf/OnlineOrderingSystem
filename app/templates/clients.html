@@ -12,6 +12,7 @@
       <th></th>
       {% if current_user.employee.title == 'Salesperson' %}
       <th></th>
+      <th></th>
       {% endif %}
     </tr>
   </thead>
@@ -22,7 +23,19 @@
       <td>{{ client.username }}</td>
       <td>{{ client.salesperson.username }}</td>
       <td><a class="btn btn-primary" href="/client/{{ client.client_id }}/">View</a></td>
+      {% if current_user.employee.title == 'Salesperson' %}
       <td><a class="btn btn-primary" href="/orders/add/{{ client.client_id }}/">New Order</a></td>
+      <td>
+        <a class="btn btn-primary" href="/client/like/{{ client.user_id }}/">
+          <span class="glyphicon glyphicon-arrow-up"></span>
+        </a>
+      </td>
+      <td>
+        <a class="btn btn-primary" href="/client/dislike/{{ client.user_id }}/">
+          <span class="glyphicon glyphicon-arrow-down"></span>
+        </a>
+      </td>
+      {% endif %}
     </tr>
 {% endfor %}
   </tbody>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Feedback Received</h1>
+<h2>Likes Received</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Left By</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for like in likes %}
+    <tr>
+      <td>{{ like.left_by.username }}</td>
+      <td>{{ like.timestamp }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Dislikes Received</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Left By</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for dislike in dislikes %}
+    <tr>
+      <td>{{ dislike.left_by.username }}</td>
+      <td>{{ dislike.timestamp }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
