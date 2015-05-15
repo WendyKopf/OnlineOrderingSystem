@@ -11,6 +11,8 @@ class User(db.Model):
     password_hash = db.Column(db.Binary(60), nullable=False)
     is_employee = db.Column(db.Boolean, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
+    banned = db.Column(db.Boolean, default=False)
+    last_banning = db.Column(db.DateTime)
 
     _authenticated = False 
 
@@ -45,6 +47,13 @@ class User(db.Model):
     @property
     def dislikes(self):
         return [fb for fb in self.feedback_received if not fb.is_positive]
+    @property
+    def feedback_left_since_banning(self):
+        if self.last_banning is None:
+            return Feedback.query.filter_by(from_user=self.id).limit(9).all()
+        return Feedback.query.\
+               filter(Feedback.from_user==self.id, Feedback.timestamp>self.last_banning).limit(9).all()
+
     
     def __repr__(self):
         return '<User %r>' % (self.username)

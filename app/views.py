@@ -24,6 +24,12 @@ login_manager.login_view = 'login'
 def load_user(username):
     return db.session.query(User).filter_by(username=username).first()
 
+@app.before_request
+def check_if_banned():
+    if current_user.is_authenticated() and current_user.banned:
+        flash("You've been banned")
+        logout_user()
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -536,6 +542,10 @@ def like_client(client_user_id):
                            timestamp=datetime.datetime.now(), is_positive=True))
     db.session.commit()
     flash('Like added')
+    last9 = emp.feedback_left_since_banning 
+    if len(last9) == 9 and (False not in last9 or True not in last9):
+        ban_user(emp)
+
     return redirect(url_for('clients'))
                            
 @login_required
@@ -550,6 +560,10 @@ def dislike_client(client_user_id):
                            timestamp=datetime.datetime.now(), is_positive=False))
     db.session.commit()
     flash('Disike added')
+    last9 = emp.feedback_left_since_banning 
+    if len(last9) == 9 and (False not in last9 or True not in last9):
+        ban_user(emp)
+
     return redirect(url_for('clients'))
 
 
@@ -563,6 +577,10 @@ def like_salesperson():
                            timestamp=datetime.datetime.now(), is_positive=True))
     db.session.commit()
     flash('Like added')
+    last9 = client.feedback_left_since_banning 
+    if len(last9) == 9 and (False not in last9 or True not in last9):
+        ban_user(client)
+
     return redirect('/')
 
 @login_required
@@ -575,6 +593,10 @@ def dislike_salesperson():
                            timestamp=datetime.datetime.now(), is_positive=False))
     db.session.commit()
     flash('Disike added')
+    last9 = client.feedback_left_since_banning 
+    if len(last9) == 9 and (False not in last9 or True not in last9):
+        ban_user(client)
+
     return redirect('/')
 
 ###############################################################################
@@ -608,3 +630,7 @@ def popular_salesperson_products(employee):
                      reverse=True)[:3]
     return Product.query.filter(Product.id.in_(tuple(popular))).all()
 
+def ban_user(user):
+    user.banned = True
+    user.last_banning = datetime.datetime.now()
+    db.session.commit()
