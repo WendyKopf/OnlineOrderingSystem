@@ -11,7 +11,11 @@
       <th>Sold To</th>
       <th>Sales Commission</th>
       <th>Total Amount</th>
+      <th>Balance</th>
       <th></th>
+      {% if current_user.employee.title == 'Manager' %}
+      <th></th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -22,7 +26,11 @@
       <td>{{ order.sold_to.username }}</td>
       <td>{{ order.commission }}</td>
       <td>{{ order.total }}</td>
+      <td>{{ order.balance }}</td>
       <td><a class="btn btn-primary" href="/orders/{{ order.id }}/">View</td>
+      {% if current_user.employee.title == 'Manager' %}
+      <td><a class="btn btn-primary" href="/orders/pay/{{ order.id }}/">Apply Payment</td>
+      {% endif %}
     </tr>
 {% endfor %}
   </tbody>

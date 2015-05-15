@@ -64,3 +64,6 @@ class PromotionForm(Form):
 
 class OrderForm(Form):
     pass
+
+class PaymentForm(Form):
+    amount = DecimalField('Amount' , validators = [DataRequired(), NumberRange(min=0.01)])

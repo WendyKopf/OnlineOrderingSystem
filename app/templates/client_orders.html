@@ -10,6 +10,7 @@
       <th>Sold By</th>
       <th>Sold To</th>
       <th>Total Amount</th>
+      <th>Balance</th>
       <th></th>
     </tr>
   </thead>
@@ -20,6 +21,7 @@
       <td>{{ order.sold_by.username }}</td>
       <td>{{ order.sold_to.username }}</td>
       <td>{{ order.total }}</td>
+      <td>{{ order.balance }}</td>
       <td><a class="btn btn-primary" href="/orders/{{ order.id }}/">View</td>
     </tr>
 {% endfor %}

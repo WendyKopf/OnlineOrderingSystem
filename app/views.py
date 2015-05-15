@@ -10,10 +10,10 @@ from app import app, bcrypt, db, login_manager
 from .forms import (
 
     AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EditClientForm, EditEmployeeForm, EmployeeForm, LoginForm,
-    OrderForm, ProductForm, PromotionForm, ReorderProductForm, IntegerField
+    OrderForm, PaymentForm, ProductForm, PromotionForm, ReorderProductForm, IntegerField
 
 )
-from .models import Client, Employee, Feedback, Product, Promotion, Order, OrderItem, User
+from .models import Client, Employee, Feedback, Payment, Product, Promotion, Order, OrderItem, User
 
 from helpers import add_error, flash_errors, flash_form_errors, flatten_hierarchy
 
@@ -699,6 +699,45 @@ def unban_client(client_id):
     client.unban()
     flash('User un-banned')
     return redirect(url_for('clients'))
+
+
+###############################################################################
+# Payments
+###############################################################################
+@login_required
+@employees_only(['Manager'])
+@app.route('/orders/pay/<int:order_id>/', methods=['GET', 'POST'])
+def apply_payment(order_id):
+    order = Order.query.filter_by(id=order_id).first()
+    if order is None:
+        abort(404)
+
+    # Make sure we're applying a payment for one of the manager's accounts 
+    if order.sold_by.manager != current_user.employee:
+        abort(404)
+
+    # Make sure this order has not already been paid
+    if order.balance <= 0:
+        flash('Payment not applied. This order has a zero balance')
+        return redirect(url_for('orders'))
+
+    # Record payment
+    form = PaymentForm()
+    if form.validate_on_submit():
+        if form.amount.data > order.balance:
+            flash('Payment amount exceeds outstanding balance')
+        else:
+            payment = Payment(order_id=order_id,
+                              amount=form.amount.data,
+                              timestamp=datetime.datetime.now())
+            db.session.add(payment)
+            db.session.commit()
+            flash('Payment added')
+            return redirect(url_for('orders'))
+    flash_form_errors(form)
+    return render_template('add_payment.html',
+                           title='Make Payment',
+                           form=form)
 
 ###############################################################################
 # Popular Products Helpers 
