@@ -439,24 +439,37 @@ def add_order(client_id):
     class ThisOrderForm(OrderForm): pass
     products = Product.query.filter_by(active=True).filter(Product.quantity>0).all()
     for product in products:
-        setattr(ThisOrderForm, str(product.id), IntegerField('Order Quantity'))
+        setattr(ThisOrderForm, str(product.id) + '_quantity', IntegerField('Item Quantity'))
+        setattr(ThisOrderForm, str(product.id) + '_discount', IntegerField('Item Discount'))
     form = ThisOrderForm()
     errors = defaultdict(list)
     if form.validate_on_submit():
         try:
+            salesperson = current_user.employee
             # Add a new order
             order = Order(timestamp=datetime.datetime.now(),
                           client=client_id,
-                          salesperson=current_user.employee.employee_id,
-                          commission=current_user.employee.commission)
+                          salesperson=salesperson.employee_id,
+                          commission=0.0)
+                          #commission=current_user.employee.commission)
             db.session.add(order)
 
             # Update inventory and add order items
-            for (id_str, quantity) in form.data.items():
+            item_count = 0
+            for (field, value) in form.data.items():
+                if not field.endswith('_quantity'):
+                    continue
+                id_str, _underscore, _quantity = field.partition('_')
+                quantity = value
                 if quantity == 0:
                     continue
                 if not id_str.isdigit():
                     errors['Form ID'].append('Invalid ID')
+                    break
+                discount = form.data[id_str + '_discount']
+                max_discount = current_user.employee.max_discount
+                if discount > max_discount:
+                    errors['Discount'].append('Discount cannot exceed %.2f%%' % (max_discount))
                     break
                 product_id = int(id_str)
                 product = Product.query.filter_by(id=product_id).first()
@@ -467,10 +480,17 @@ def add_order(client_id):
                     errors[product.description].append('Insufficent Inventory')
                     break
                 product.quantity -= quantity
+                price = product.promo_price * ((100 - discount)/100.0)
                 db.session.add(OrderItem(order_id=order.id,
                                          product_id=product.id,
-                                         price=product.promo_price,
+                                         price=price,
                                          quantity=quantity))
+                order.commission += salesperson.commission * ((100 - discount)/100.0) * price
+                item_count += 1
+
+            # Make sure we don't submit an empty order
+            if not errors and item_count == 0:
+                errors['Quantity'].append('At least one item must be selected')
 
             # Attempt to commit changes
             if errors:
@@ -523,3 +543,4 @@ def popular_salesperson_products(employee):
                      key=lambda item_id: counter[item_id],
                      reverse=True)[:3]
     return Product.query.filter(Product.id.in_(tuple(popular))).all()
+

@@ -13,6 +13,7 @@
         <th>Price</th>
         <th>Quantity In Stock</th>
         <th>Order Quantity</th>
+        <th>Discount</th>
       </tr>
     </thead>
     <tbody>
@@ -22,7 +23,8 @@
         <td>{{ product.name }}</td>
         <td>{{ '$%.2f' % product.promo_price }}</td>
         <td>{{ product.quantity }}</td>
-        <td><input type="text" id="{{ product.id }}" name="{{ product.id }}" value=0></td>
+        <td><input type="text" id="{{ product.id }}_quantity" name="{{ product.id }}_quantity" value=0></td>
+        <td><input type="text" id="{{ product.id }}_discount" name="{{ product.id }}_discount" value=0></td>
       </tr>
   {% endfor %}
     </tbody>

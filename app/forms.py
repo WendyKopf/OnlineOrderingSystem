@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField
+from wtforms import BooleanField, DecimalField, IntegerField, PasswordField, SelectField, StringField
 from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.validators import DataRequired, Length, NumberRange
 
@@ -22,8 +22,8 @@ class AddEmployeeForm(EmployeeForm):
     password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
     password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
     managed_by = SelectField('ManagedBy',coerce=int)
-    commission = StringField('Commission' , validators = [DataRequired()])
-    max_discount = StringField('Max Discount' , validators =[DataRequired()])
+    commission = DecimalField('Commission' , validators = [DataRequired(), NumberRange(0, 100)])
+    max_discount = DecimalField('Max Discount' , validators =[DataRequired(), NumberRange(0, 100)])
     title = SelectField(u'title', choices=[('Director', 'Director'), ('Manager', 'Manager'), ('Salesperson', 'Salesperson')])
     
     
