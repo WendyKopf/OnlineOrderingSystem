@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Client {{ client.client_id }}</h1>
+<form class="form-horizontal" action="{{ request.url }}" method="post" name="edit_client">
+  {{ forms.disabled_text_field(form.user_id) }}
+  {{ forms.disabled_text_field(form.name) }}
+  {{ forms.disabled_price_field(form.price) }}
+  {{ forms.populated_text_field(form.quantity, product.quantity) }}
+  {{ forms.submit_button("Update") }}
+</form>
+{% endblock %}

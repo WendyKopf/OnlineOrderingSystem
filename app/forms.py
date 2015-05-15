@@ -25,7 +25,13 @@ class AddEmployeeForm(EmployeeForm):
     commission = StringField('Commission' , validators = [DataRequired()])
     max_discount = StringField('Max Discount' , validators =[DataRequired()])
     title = SelectField(u'title', choices=[('Director', 'Director'), ('Manager', 'Manager'), ('Salesperson', 'Salesperson')])
-    
+
+class EditEmployeeForm(EmployeeForm):
+    #active     = SelectField('Current Employee?', choices = [('True', 'True'), ('False', 'False')], validators = [DataRequired()])
+    managed_by = SelectField('ManagedBy',coerce=int)
+    commission = StringField('Commission' , validators = [DataRequired()])
+    max_discount = StringField('Max Discount' , validators =[DataRequired()])
+    title = SelectField(u'Title', choices=[('Director', 'Director'), ('Manager', 'Manager'), ('Salesperson', 'Salesperson')])
     
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])

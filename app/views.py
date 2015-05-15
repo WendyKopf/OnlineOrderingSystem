@@ -7,7 +7,7 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from app import app, bcrypt, db, login_manager
 
 from .forms import (
-    AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EmployeeForm, LoginForm,
+    AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EditEmployeeForm, EmployeeForm, LoginForm,
     ProductForm, PromotionForm, ReorderProductForm
 )
 from .models import Client, Employee, Product, Promotion, Order, OrderItem, User
@@ -198,6 +198,8 @@ def client(client_id):
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
 
+
+#Have to create a form to fill again.
 @app.route('/client/edit/<client_id>/')
 @employees_only()
 @login_required
@@ -251,13 +253,29 @@ def employee(employee_id):
                            employee=emp) 
 
 @app.route('/employee/edit/<employee_id>/')
-@employees_only()
+@employees_only(['Director'])
 @login_required
 def edit_employee(employee_id):
-    # TODO: Only list employees that are managed by that employee.
+    form = EditEmployeeForm()
     emp = Employee.query.filter_by(employee_id=employee_id).first()
-    if emp is None:
-        abort(404)
+    title = 'Edit Employee'
+    managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
+    form.managed_by.choices = managedBy
+    if form.validate_on_submit():
+        # Validate form data
+	user = Employee()
+	emp.username = form.username.data
+	emp.active = form.active.data
+	emp.managed_by = form.managed_by.data
+	emp.title = form.title.data
+	emp.commission = form.commission.data
+	emp.max_discount = form.max_discount.data
+	db.session.commit()
+	flash('Employee updated successfully')
+	return redirect('/employees/')
+    else:
+	flash('Invalid Action')
+    flash_errors(form)
     return render_template('edit_employee.html',
                            title = 'Edit Employee - %s' % (emp.username),
                            employee=emp) 
