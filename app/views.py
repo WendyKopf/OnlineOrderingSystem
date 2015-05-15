@@ -190,6 +190,30 @@ def add_employee():
             return redirect('/employees/')
     flash_form_errors(form)
     return render_template('add_employee.html', title=title, form=form)
+
+@app.route('/employee/edit/<employee_id>/')
+@employees_only(['Director'])
+@login_required
+def edit_employee(employee_id):
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    form = EditEmployeeForm(obj=emp)
+    title = 'Edit Employee'
+    managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
+    form.managed_by.choices = managedBy
+    if form.validate_on_submit():
+	emp.username = form.username.data
+	emp.active = form.active.data
+	emp.managed_by = form.managed_by.data
+	emp.title = form.title.data
+	emp.commission = form.commission.data
+	emp.max_discount = form.max_discount.data
+	db.session.commit()
+	flash('Employee updated successfully')
+	return redirect('/employees/')
+  
+    return render_template('edit_employee.html',
+                           title = 'Edit Employee - %s' % (emp.username),
+                           form = form) 
     
 ###############################################################################
 # Client Management
@@ -219,6 +243,7 @@ def client(client_id):
     return render_template('client.html',
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
+			   
 
 
 #Have to create a form to fill again.
@@ -226,14 +251,26 @@ def client(client_id):
 @employees_only()
 @login_required
 def edit_client(client_id):
-    # TODO: Only list clients that are assigned to salesperson or one a
-    #       a director/manager manages.
     cli = Client.query.filter_by(client_id=client_id).first()
     if cli is None:
         abort(404)
+    form = EditClientForm()
+    title = 'Edit Client'
+    all_reports = flatten_hierarchy(current_user.employee, lambda e: [e])
+    salesperson_ids = [(s.employee_id, s.username) for s in all_reports if s.title == 'Salesperson'] 
+    form.salesperson_id.choices = salesperson_ids
+    if form.validate_on_submit():
+	cli.salesperson_id = form.salesperson_id.data
+	cli.company = form.company.data
+	db.session.commit()
+	flash('Client updated successfully')
+	return redirect('/clients/')
+   
     return render_template('edit_client.html',
                            title = 'Edit Client - %s' % (cli.username),
-                           client=cli) 
+                           form=form)     
+    
+    
 
 
 
@@ -262,33 +299,7 @@ def add_client():
 
     
 
-@app.route('/employee/edit/<employee_id>/')
-@employees_only(['Director'])
-@login_required
-def edit_employee(employee_id):
-    form = EditEmployeeForm()
-    emp = Employee.query.filter_by(employee_id=employee_id).first()
-    title = 'Edit Employee'
-    managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
-    form.managed_by.choices = managedBy
-    if form.validate_on_submit():
-        # Validate form data
-	user = Employee()
-	emp.username = form.username.data
-	emp.active = form.active.data
-	emp.managed_by = form.managed_by.data
-	emp.title = form.title.data
-	emp.commission = form.commission.data
-	emp.max_discount = form.max_discount.data
-	db.session.commit()
-	flash('Employee updated successfully')
-	return redirect('/employees/')
-    else:
-	flash('Invalid Action')
-    flash_errors(form)
-    return render_template('edit_employee.html',
-                           title = 'Edit Employee - %s' % (emp.username),
-                           form = form) 
+
 
 ###############################################################################
 # Employee sales and orders 

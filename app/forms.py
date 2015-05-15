@@ -47,8 +47,6 @@ class AddClientForm(ClientForm):
     salesperson_id = SelectField(u'Salesperson', coerce=int)
 
 class EditClientForm(ClientForm):
-    password1 = StringField('Password', validators=[DataRequired(), Length(min=10)])
-    password2 = StringField('Confirm Password', validators=[DataRequired(), Length(min=10)])
     salesperson_id = SelectField(u'Salesperson', coerce=int)
 
 
