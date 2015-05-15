@@ -78,6 +78,13 @@ class Employee(User):
     @property
     def sales_total(self):
         return sum([order.total for order in self.orders])
+    @property
+    def all_reports(self):
+        reports = [r for r in self.direct_reports]
+        for r in reports:
+            reports.extend(r.all_reports)
+        return reports
+
     def __repr__(self):
         return '<Employee id: %i, username: %r>' % (self.id, self.username)
 
@@ -88,6 +95,17 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
+
+    @property
+    def promo_price(self):
+        promo = Promotion.query.filter_by(product_id=self.id).first()
+        if promo is None:
+            return self.price
+        return promo.discount
+    @property
+    def description(self):
+        return '%s - %s' % (self.manufacturer, self.name)
+
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

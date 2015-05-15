@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import BooleanField, SelectField, StringField, PasswordField
+from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField
 from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.validators import DataRequired, Length, NumberRange
 
@@ -54,3 +54,6 @@ ReorderProductForm  = model_form(models.Product, base_class=Form, exclude=['acti
 
 class PromotionForm(Form):
     discount = StringField('Discount Price', validators=[DataRequired(), NumberRange(min=0.01)])
+
+class OrderForm(Form):
+    pass

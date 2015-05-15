@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">All Orders</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Sold By</th>
+      <th>Sold To</th>
+      <th>Sales Commission</th>
+      <th>Total Amount</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+{% for order in orders %}
+    <tr>
+      <td>{{ order.timestamp }}</td>
+      <td>{{ order.sold_by.username }}</td>
+      <td>{{ order.sold_to.username }}</td>
+      <td>{{ order.commission }}</td>
+      <td>{{ order.total }}</td>
+      <td><a class="btn btn-primary" href="/orders/{{ order.id }}/">View</td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

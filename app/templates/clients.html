@@ -10,6 +10,9 @@
       <th>User Name</th>
       <th>Salesperson</th>
       <th></th>
+      {% if current_user.employee.title == 'Salesperson' %}
+      <th></th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -19,6 +22,7 @@
       <td>{{ client.username }}</td>
       <td>{{ client.salesperson.username }}</td>
       <td><a class="btn btn-primary" href="/client/{{ client.client_id }}/">View</a></td>
+      <td><a class="btn btn-primary" href="/orders/add/{{ client.client_id }}/">New Order</a></td>
     </tr>
 {% endfor %}
   </tbody>
