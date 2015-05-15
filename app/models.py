@@ -154,7 +154,10 @@ class Order(db.Model):
 
     @property
     def total(self):
-        return sum([item.price * item.quantity for item in self.items]) 
+        return sum([item.price * item.quantity for item in self.items])
+    @property
+    def balance(self):
+        return self.total - sum([p.amount for p in self.payments])
 
 class OrderItem(db.Model):
     order_id = db.Column(db.Integer,  db.ForeignKey('order.id'), primary_key=True)
@@ -179,3 +182,10 @@ class Feedback(db.Model):
     @property
     def left_by(self):
         return User.query.filter_by(id=self.from_user).first()
+
+class Payment(db.Model):
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    order = db.relationship('Order', backref=db.backref('payments', lazy='dynamic'))
+

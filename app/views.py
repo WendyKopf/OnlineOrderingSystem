@@ -1,8 +1,10 @@
 import datetime
+import StringIO
+import csv
 from functools import wraps
 from collections import defaultdict
 
-from flask import abort, flash, g, redirect, render_template, request, session, url_for
+from flask import abort, flash, g, redirect, render_template, request, session, url_for, make_response 
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 from app import app, bcrypt, db, login_manager
@@ -10,10 +12,10 @@ from app import app, bcrypt, db, login_manager
 from .forms import (
 
     AddClientForm, AddEmployeeForm, ClientForm, CreateUserForm, EditClientForm, EditEmployeeForm, EmployeeForm, LoginForm,
-    OrderForm, ProductForm, PromotionForm, ReorderProductForm, IntegerField
+    OrderForm, PaymentForm, ProductForm, PromotionForm, ReorderProductForm, IntegerField
 
 )
-from .models import Client, Employee, Feedback, Product, Promotion, Order, OrderItem, User
+from .models import Client, Employee, Feedback, Payment, Product, Promotion, Order, OrderItem, User
 
 from helpers import add_error, flash_errors, flash_form_errors, flatten_hierarchy
 
@@ -660,7 +662,37 @@ def add_order(client_id):
                            client=client,
                            products=products,
                            form=form)
-                        
+
+@login_required
+@app.route('/orders/export/<int:order_id>/')
+def export_order(order_id):
+    if current_user.is_employee and current_user.employee.title != 'Salesperson':
+        abort(404)
+    elif current_user.is_employee:
+        order = Order.query.filter(Order.id==order_id, Order.salesperson==current_user.employee.employee_id).first()
+    else:
+        order = Order.query.filter(Order.id==order_id, Order.client==current_user.client.client_id).first()
+    if order is None:
+        abort(404)
+
+    f = StringIO.StringIO()
+    writer = csv.writer(f)
+    if current_user.employee:
+        writer.writerow(('Timestamp', 'Client', 'Product Manufacturer', 'Product Name', 'Price', 'Quantity'))
+        for item in order.items:
+            writer.writerow((order.timestamp, order.sold_to.username, item.product.manufacturer,
+                             item.product.name, item.product.price, item.product.quantity))
+    else:
+        writer.writerow(('Timestamp', 'Salesperson', 'Product Manufacturer', 'Product Name', 'Price', 'Quantity'))
+        for item in order.items:
+            writer.writerow((order.timestamp, order.sold_by.username, item.product.manufacturer,
+                             item.product.name, item.product.price, item.product.quantity))
+
+    response = make_response(f.getvalue())
+    response.headers["Content-Disposition"] = "attachment;filename=orders.csv"
+    f.close()
+    return response
+
 ###############################################################################
 # Feedback - Likes/Dislikes 
 ###############################################################################
@@ -744,8 +776,19 @@ def dislike_salesperson():
     return redirect('/')
 
 ###############################################################################
-# Unban users 
+# Ban/Unban users 
 ###############################################################################
+@employees_only(['Manager'])
+@login_required
+@app.route('/client/ban/<int:client_id>/')
+def ban_client(client_id):
+    client = Client.query.filter_by(client_id=client_id).first()
+    if client.salesperson not in current_user.employee.direct_reports:
+        abort(404)
+    client.ban()
+    flash('User banned')
+    return redirect(url_for('clients'))
+
 @employees_only(['Manager'])
 @login_required
 @app.route('/salesperson/unban/<int:employee_id>/')
@@ -767,6 +810,45 @@ def unban_client(client_id):
     client.unban()
     flash('User un-banned')
     return redirect(url_for('clients'))
+
+
+###############################################################################
+# Payments
+###############################################################################
+@login_required
+@employees_only(['Manager'])
+@app.route('/orders/pay/<int:order_id>/', methods=['GET', 'POST'])
+def apply_payment(order_id):
+    order = Order.query.filter_by(id=order_id).first()
+    if order is None:
+        abort(404)
+
+    # Make sure we're applying a payment for one of the manager's accounts 
+    if order.sold_by.manager != current_user.employee:
+        abort(404)
+
+    # Make sure this order has not already been paid
+    if order.balance <= 0:
+        flash('Payment not applied. This order has a zero balance')
+        return redirect(url_for('orders'))
+
+    # Record payment
+    form = PaymentForm()
+    if form.validate_on_submit():
+        if form.amount.data > order.balance:
+            flash('Payment amount exceeds outstanding balance')
+        else:
+            payment = Payment(order_id=order_id,
+                              amount=form.amount.data,
+                              timestamp=datetime.datetime.now())
+            db.session.add(payment)
+            db.session.commit()
+            flash('Payment added')
+            return redirect(url_for('orders'))
+    flash_form_errors(form)
+    return render_template('add_payment.html',
+                           title='Make Payment',
+                           form=form)
 
 ###############################################################################
 # Popular Products Helpers 
