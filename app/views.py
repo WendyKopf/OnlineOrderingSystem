@@ -27,6 +27,7 @@ def load_user(username):
 @app.before_request
 def check_if_banned():
     if current_user.is_authenticated() and current_user.banned:
+        print current_user.username, current_user.banned
         flash("You've been banned")
         logout_user()
 
@@ -544,7 +545,7 @@ def like_client(client_user_id):
     flash('Like added')
     last9 = emp.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(emp)
+        ban_user(emp.id)
 
     return redirect(url_for('clients'))
                            
@@ -562,7 +563,7 @@ def dislike_client(client_user_id):
     flash('Disike added')
     last9 = emp.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(emp)
+        ban_user(emp.id)
 
     return redirect(url_for('clients'))
 
@@ -579,7 +580,7 @@ def like_salesperson():
     flash('Like added')
     last9 = client.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(client)
+        ban_user(client.id)
 
     return redirect('/')
 
@@ -595,9 +596,45 @@ def dislike_salesperson():
     flash('Disike added')
     last9 = client.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(client)
+        ban_user(client.id)
 
     return redirect('/')
+
+###############################################################################
+# Unban users 
+###############################################################################
+@employees_only(['Manager'])
+@login_required
+@app.route('/salesperson/unban/<int:employee_id>/')
+def unban_salesperson(employee_id):
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    if emp not in current_user.employee.direct_reports:
+        abort(404)
+    unban_user(emp.id)
+    flash('User un-banned')
+    return redirect(url_for('employees'))
+
+@employees_only(['Manager'])
+@login_required
+@app.route('/client/unban/<int:client_id>/')
+def unban_client(client_id):
+    client = Client.query.filter_by(client_id=client_id).first()
+    if client.salesperson not in current_user.employee.direct_reports:
+        abort(404)
+    unban_user(client.id)
+    flash('User un-banned')
+    return redirect(url_for('clients'))
+
+def ban_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    user.banned = True
+    user.last_banning = datetime.datetime.now()
+    db.session.commit()
+
+def unban_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    user.banned = False 
+    db.session.commit()
 
 ###############################################################################
 # Popular Products Helpers 
@@ -630,7 +667,3 @@ def popular_salesperson_products(employee):
                      reverse=True)[:3]
     return Product.query.filter(Product.id.in_(tuple(popular))).all()
 
-def ban_user(user):
-    user.banned = True
-    user.last_banning = datetime.datetime.now()
-    db.session.commit()
