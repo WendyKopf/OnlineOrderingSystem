@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1 class="page-header">Add payment</h1>
+<form class="form-horizontal" method="post" name="add_payment">
+  {{ form.hidden_tag() }}
+  {{ forms.text_field(form.amount) }}
+  {{ forms.submit_button("Submit") }}
+</form>
+{% endblock %}
