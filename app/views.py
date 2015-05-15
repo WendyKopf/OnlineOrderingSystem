@@ -24,12 +24,25 @@ login_manager.login_view = 'login'
 def load_user(username):
     return db.session.query(User).filter_by(username=username).first()
 
-@app.before_request
 def check_if_banned():
-    if current_user.is_authenticated() and current_user.banned:
-        print current_user.username, current_user.banned
+    if not current_user.is_authenticated():
+        return
+    if current_user.is_employee and current_user.employee.title == 'Salesperson':
+        # Salespeople get banned if they have 9 dislikes
+        if len([fb for fb in current_user.feedback_received_since_banning if not fb.is_positive]) >= 9:
+            current_user.ban()
+    elif not current_user.is_employee:
+        # Client gets banned if they have 2 dislikes
+        if len([fb for fb in current_user.feedback_received_since_banning if not fb.is_positive]) >= 2:
+            current_user.ban()
+
+    if current_user.banned:
         flash("You've been banned")
         logout_user()
+
+if None not in app.before_request_funcs:
+    app.before_request_funcs[None] = []
+app.before_request_funcs[None].append(check_if_banned)
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -545,7 +558,7 @@ def like_client(client_user_id):
     flash('Like added')
     last9 = emp.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(emp.id)
+        emp.ban()
 
     return redirect(url_for('clients'))
                            
@@ -563,7 +576,7 @@ def dislike_client(client_user_id):
     flash('Disike added')
     last9 = emp.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(emp.id)
+        emp.ban()
 
     return redirect(url_for('clients'))
 
@@ -580,7 +593,7 @@ def like_salesperson():
     flash('Like added')
     last9 = client.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(client.id)
+        client.ban()
 
     return redirect('/')
 
@@ -596,7 +609,7 @@ def dislike_salesperson():
     flash('Disike added')
     last9 = client.feedback_left_since_banning 
     if len(last9) == 9 and (False not in last9 or True not in last9):
-        ban_user(client.id)
+        client.ban()
 
     return redirect('/')
 
@@ -610,7 +623,7 @@ def unban_salesperson(employee_id):
     emp = Employee.query.filter_by(employee_id=employee_id).first()
     if emp not in current_user.employee.direct_reports:
         abort(404)
-    unban_user(emp.id)
+    emp.unban()
     flash('User un-banned')
     return redirect(url_for('employees'))
 
@@ -621,20 +634,9 @@ def unban_client(client_id):
     client = Client.query.filter_by(client_id=client_id).first()
     if client.salesperson not in current_user.employee.direct_reports:
         abort(404)
-    unban_user(client.id)
+    client.unban()
     flash('User un-banned')
     return redirect(url_for('clients'))
-
-def ban_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    user.banned = True
-    user.last_banning = datetime.datetime.now()
-    db.session.commit()
-
-def unban_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    user.banned = False 
-    db.session.commit()
 
 ###############################################################################
 # Popular Products Helpers 

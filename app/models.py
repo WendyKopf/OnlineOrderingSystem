@@ -1,4 +1,5 @@
 from app import db
+import datetime
 
 USERNAME_MIN_LEN = 3
 USERNAME_MAX_LEN = 32
@@ -19,11 +20,19 @@ class User(db.Model):
     def get_id(self):
         return self.username
     def is_active(self):
-        return self.active
+        return self.active and self.banned != True 
     def is_anonymous(self):
         return False
     def is_authenticated(self):
         return True
+    def ban(self):
+        self.banned = True
+        self.last_banning = datetime.datetime.now()
+        db.session.commit()
+    def unban(self):
+        self.banned = False 
+        db.session.commit()
+
     @property
     def client(self):
         if self.is_employee:
@@ -53,6 +62,12 @@ class User(db.Model):
             return Feedback.query.filter_by(from_user=self.id).limit(9).all()
         return Feedback.query.\
                filter(Feedback.from_user==self.id, Feedback.timestamp>self.last_banning).limit(9).all()
+    @property
+    def feedback_received_since_banning(self):
+        if self.last_banning is None:
+            return Feedback.query.filter_by(to_user=self.id).all()
+        return Feedback.query.\
+               filter(Feedback.to_user==self.id, Feedback.timestamp>self.last_banning).all()
 
     
     def __repr__(self):
