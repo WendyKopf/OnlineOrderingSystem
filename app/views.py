@@ -199,7 +199,7 @@ def client(user_id):
                            client=cli) 
 
 @app.route('/client/add/', methods=['GET', 'POST'])
-@employees_only(['Director']) # TODO: should managers be able to do this?
+@employees_only(['Manager'])
 @login_required
 def add_client():
     form = AddClientForm()

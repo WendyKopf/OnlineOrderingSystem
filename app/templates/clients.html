@@ -23,5 +23,7 @@
 {% endfor %}
   </tbody>
 </table>
+{% if current_user.employee.title == 'Manager' %}
 <a class="btn btn-primary" href="/client/add/">Add Client</a>
+{% endif %}
 {% endblock %}
