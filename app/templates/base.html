@@ -57,6 +57,10 @@
             <li><a href="/products/">Products</a></li>
             <li><a href="/promotions/">Promotions</a></li>
             <li><a href="/feedback/">Feedback</a></li>
+            {% if not current_user.is_employee %}
+            <li><a href="/salesperson/like/">Like Salesperson</a></li>
+            <li><a href="/salesperson/dislike/">Disike Salesperson</a></li>
+            {% endif %}
             {% endif %}
           </ul>
         </div>

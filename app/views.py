@@ -553,6 +553,30 @@ def dislike_client(client_user_id):
     return redirect(url_for('clients'))
 
 
+@login_required
+@app.route('/salesperson/like/')
+def like_salesperson():
+    if current_user.is_employee:
+        abort(404)
+    client = current_user.client
+    db.session.add(Feedback(from_user=client.user_id, to_user=client.salesperson.user_id,
+                           timestamp=datetime.datetime.now(), is_positive=True))
+    db.session.commit()
+    flash('Like added')
+    return redirect('/')
+
+@login_required
+@app.route('/salesperson/dislike/')
+def dislike_salesperson():
+    if current_user.is_employee:
+        abort(404)
+    client = current_user.client
+    db.session.add(Feedback(from_user=client.user_id, to_user=client.salesperson.user_id,
+                           timestamp=datetime.datetime.now(), is_positive=False))
+    db.session.commit()
+    flash('Disike added')
+    return redirect('/')
+
 ###############################################################################
 # Popular Products Helpers 
 ###############################################################################
