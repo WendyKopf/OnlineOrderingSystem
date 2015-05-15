@@ -115,6 +115,7 @@ class OrderItem(db.Model):
 class Promotion(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), primary_key=True)
     discount = db.Column(db.Float, nullable=False, unique=True)
+    product = db.relationship('Product')
 
 class Feedback(db.Model):
     from_user = db.Column(db.String(USERNAME_MAX_LEN), nullable=False, primary_key=True)

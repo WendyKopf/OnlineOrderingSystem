@@ -51,3 +51,6 @@ ProductForm  = model_form(models.Product,
                               'quantity' : { 'validators': [NumberRange(min=1)]}
                           })
 ReorderProductForm  = model_form(models.Product, base_class=Form, exclude=['active'])
+
+class PromotionForm(Form):
+    discount = StringField('Discount Price', validators=[DataRequired(), NumberRange(min=0.01)])
