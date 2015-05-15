@@ -181,22 +181,37 @@ def clients():
 @login_required
 @employees_only()
 def employees():
-    employees = Employee.query.filter(Employee.title!='Salesperson').all()
+    employees = Employee.query.all()
     title = 'All Employees'
     return render_template('employees.html', title=title, employees=employees)
 
-@app.route('/client/<user_id>/')
+@app.route('/client/<client_id>/')
 @employees_only()
 @login_required
-def client(user_id):
+def client(client_id):
     # TODO: Only list clients that are assigned to salesperson or one a
     #       a director/manager manages.
-    cli = Client.query.filter_by(user_id=user_id).first()
+    cli = Client.query.filter_by(client_id=client_id).first()
     if cli is None:
         abort(404)
     return render_template('client.html',
                            title = 'Client - %s' % (cli.username),
                            client=cli) 
+
+@app.route('/client/edit/<client_id>/')
+@employees_only()
+@login_required
+def edit_client(client_id):
+    # TODO: Only list clients that are assigned to salesperson or one a
+    #       a director/manager manages.
+    cli = Client.query.filter_by(client_id=client_id).first()
+    if cli is None:
+        abort(404)
+    return render_template('edit_client.html',
+                           title = 'Edit Client - %s' % (cli.username),
+                           client=cli) 
+
+
 
 @app.route('/client/add/', methods=['GET', 'POST'])
 @employees_only(['Director']) # TODO: should managers be able to do this?
@@ -233,6 +248,18 @@ def employee(employee_id):
         abort(404)
     return render_template('employee.html',
                            title = 'Employee - %s' % (emp.username),
+                           employee=emp) 
+
+@app.route('/employee/edit/<employee_id>/')
+@employees_only()
+@login_required
+def edit_employee(employee_id):
+    # TODO: Only list employees that are managed by that employee.
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    if emp is None:
+        abort(404)
+    return render_template('edit_employee.html',
+                           title = 'Edit Employee - %s' % (emp.username),
                            employee=emp) 
 ###############################################################################
 # Employee sales and orders 
