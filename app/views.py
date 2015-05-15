@@ -676,8 +676,19 @@ def dislike_salesperson():
     return redirect('/')
 
 ###############################################################################
-# Unban users 
+# Ban/Unban users 
 ###############################################################################
+@employees_only(['Manager'])
+@login_required
+@app.route('/client/ban/<int:client_id>/')
+def ban_client(client_id):
+    client = Client.query.filter_by(client_id=client_id).first()
+    if client.salesperson not in current_user.employee.direct_reports:
+        abort(404)
+    client.ban()
+    flash('User banned')
+    return redirect(url_for('clients'))
+
 @employees_only(['Manager'])
 @login_required
 @app.route('/salesperson/unban/<int:employee_id>/')

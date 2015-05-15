@@ -18,6 +18,11 @@
     <div class="col-sm-2">
       <a class="btn btn-primary" href="/client/edit/{{ client.client_id }}/">Edit</a>
     </div>
+  {% if current_user.employee.title == 'Manager' and not client.banned %}
+    <div class="col-sm-2">
+      <a class="btn btn-primary" href="/client/ban/{{ client.client_id }}/">Ban</a>
+    </div>
+  {% endif %}
   {% if current_user.employee.title == 'Manager' and client.banned %}
     <div class="col-sm-2">
       <a class="btn btn-primary" href="/client/unban/{{ client.client_id }}/">Un-Ban</a>
