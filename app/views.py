@@ -133,7 +133,7 @@ def client_dashboard():
 @login_required
 @employees_only(['Manager', 'Director'])
 def employees():
-    employees = current_user.employee.all_reports
+    employees = [emp for emp in current_user.employee.all_reports if emp.active]
     title = 'All Employees'
     return render_template('employees.html', title=title, employees=employees)
 
@@ -148,6 +148,48 @@ def employee(employee_id):
     return render_template('employee.html',
                            title = 'Employee - %s' % (emp.username),
                            employee=emp) 
+                           
+@app.route('/employee/fire/<employee_id>/', methods = ['GET','POST'])
+@employees_only()
+@login_required
+def fire_employee(employee_id):
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    if emp is None:
+        abort(404)
+    emp_cli = Client.query.filter_by(salesperson_id = employee_id).all()
+    new_salesperson = Employee.query.filter(Employee.title == 'Salesperson', Employee.employee_id != employee_id).first()
+    for cli in emp_cli:
+    	cli.salesperson_id = new_salesperson.employee_id
+    emp.active = False
+    db.session.commit()
+    flash('Employee Fired!')
+    return redirect(url_for('employees'))
+                           
+@app.route('/employee/promote/<employee_id>/')
+@employees_only()
+@login_required
+def promote_employee(employee_id):
+    # TODO: Only list employees that are managed by that employee.
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    if emp is None:
+        abort(404)
+    return render_template('employee.html',
+                           title = 'Promote Employee - %s' % (emp.username),
+                           employee=emp)
+                           
+@app.route('/employee/demote/<employee_id>/')
+@employees_only()
+@login_required
+def demote_employee(employee_id):
+    # TODO: Only list employees that are managed by that employee.
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    if emp is None:
+        abort(404)
+    return render_template('employee.html',
+                           title = 'Demote Employee - %s' % (emp.username),
+                           employee=emp)
+
+
 
 @app.route('/employee/add/', methods=['GET', 'POST'])
 @employees_only(['Manager', 'Director'])
@@ -190,30 +232,57 @@ def add_employee():
             return redirect('/employees/')
     flash_form_errors(form)
     return render_template('add_employee.html', title=title, form=form)
-
-@app.route('/employee/edit/<employee_id>/')
-@employees_only(['Director'])
+    
+@app.route('/employee/edit/<employee_id>/', methods = ['GET', 'POST'])
+@employees_only(['Manager', 'Director'])
 @login_required
 def edit_employee(employee_id):
+    if current_user.is_employee and  current_user.employee.title =='Manager':
+        return manager_edit_employee(employee_id)
+    return director_edit_employee(employee_id)
+
+def manager_edit_employee(employee_id):
     emp = Employee.query.filter_by(employee_id=employee_id).first()
     form = EditEmployeeForm(obj=emp)
     title = 'Edit Employee'
     managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
     form.managed_by.choices = managedBy
+    new_commission = form.commission.data
+    new_max_discount = form.max_discount.data
     if form.validate_on_submit():
         emp.username = form.username.data
-        emp.active = form.active.data
         emp.managed_by = form.managed_by.data
         emp.title = form.title.data
-        emp.commission = form.commission.data
-        emp.max_discount = form.max_discount.data
+        emp.commission = new_commission
+        emp.max_discount = new_max_discount
         db.session.commit()
         flash('Employee updated successfully')
         return redirect('/employees/')
   
-    return render_template('edit_employee.html',
+    return render_template('manager_edit_employee.html',
                            title = 'Edit Employee - %s' % (emp.username),
-                           form = form) 
+                           form = form, employee=emp) 
+def director_edit_employee(employee_id):
+    emp = Employee.query.filter_by(employee_id=employee_id).first()
+    form = EditEmployeeForm(obj=emp)
+    title = 'Edit Employee'
+    managedBy = [(e.employee_id,e.username) for e in Employee.query.filter(Employee.title != 'Salesperson').all()]
+    form.managed_by.choices = managedBy
+    new_commission = form.commission.data
+    new_max_discount = form.max_discount.data
+    if form.validate_on_submit():
+        emp.username = form.username.data
+        emp.managed_by = form.managed_by.data
+        emp.title = form.title.data
+        emp.commission = new_commission
+        emp.max_discount = new_max_discount
+        db.session.commit()
+        flash('Employee updated successfully')
+        return redirect('/employees/')
+  
+    return render_template('director_edit_employee.html',
+                           title = 'Edit Employee - %s' % (emp.username),
+                           form = form, employee=emp) 
     
 ###############################################################################
 # Client Management
@@ -246,22 +315,21 @@ def client(client_id):
                
 
 
-#Have to create a form to fill again.
-@app.route('/client/edit/<client_id>/')
-@employees_only()
+@app.route('/client/edit/<client_id>/', methods=['GET', 'POST'])
+@employees_only(['Manager', 'Director'])
 @login_required
 def edit_client(client_id):
     cli = Client.query.filter_by(client_id=client_id).first()
     if cli is None:
         abort(404)
-    form = EditClientForm()
+    form = EditClientForm(obj = cli)
     title = 'Edit Client'
     all_reports = flatten_hierarchy(current_user.employee, lambda e: [e])
     salesperson_ids = [(s.employee_id, s.username) for s in all_reports if s.title == 'Salesperson'] 
     form.salesperson_id.choices = salesperson_ids
+    new_salesperson = form.salesperson_id.data
     if form.validate_on_submit():
-        cli.salesperson_id = form.salesperson_id.data
-        cli.company = form.company.data
+        cli.salesperson_id = new_salesperson 
         db.session.commit()
         flash('Client updated successfully')
         return redirect('/clients/')

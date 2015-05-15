@@ -3,12 +3,17 @@
 
 {% block content %}
 <h1 class="page-header">Edit Employee</h1>
-<form class="form-horizontal"  method="post" name="edit_employee">
+<form class="form-horizontal"  method="post" name="director_edit_employee">
   {{ form.hidden_tag() }}
   {{ forms.disabled_text_field(form.username)}}
   {{ forms.text_field(form.commission)}}
   {{ forms.text_field(form.max_discount)}}
   {{ forms.disabled_text_field(form.title)}}
   {{ forms.submit_button("Update")}}
+  {% if employee.title == 'Salesperson' %}
+	<td><a class="btn btn-primary" href="/employee/promote/{{ employee.employee_id }}/">Promote</a></td>
+      {% else %}
+	<td><a class="btn btn-primary" href="/employee/demote/{{ employee.employee_id }}/">Demote</a></td>
+      {% endif %}
 </form>
 {% endblock %}
