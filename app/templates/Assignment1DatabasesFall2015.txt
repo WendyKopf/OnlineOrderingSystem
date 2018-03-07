@@ -1,0 +1,936 @@
+wendy@wendy-HP-Stream-Notebook-PC-13:~$ ssh kopf3146@134.74.126.104
+kopf3146@134.74.126.104's password: 
+Last login: Tue Sep 22 23:23:07 2015 from pool-100-8-173-179.nwrknj.fios.verizon.net
+Welcome to the Linux lab of Computer Science at CCNY.
+[kopf3146@css2c70 ~]$ ssh kopf3146@134.74.126.107
+kopf3146@134.74.126.107's password: 
+Last login: Tue Sep 22 23:11:35 2015 from css4s1
+-bash: /usr/local/apps/rhel/etc/login_message: No such file or directory
+[kopf3146@css7a0 ~]$ mysql -u 'F15336wkopf' -p'16133146'
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 49813
+Server version: 5.5.42 MySQL Community Server (GPL) by Remi
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use F15336wkopf
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from au_pix;
+Empty set (0.00 sec)
+
+mysql> describe au_pix;
++---------------+------------+------+-----+---------+-------+
+| Field         | Type       | Null | Key | Default | Extra |
++---------------+------------+------+-----+---------+-------+
+| au_id         | char(11)   | NO   | PRI | NULL    |       |
+| pic           | mediumblob | YES  |     | NULL    |       |
+| format_type   | char(11)   | YES  |     | NULL    |       |
+| bytesize      | int(11)    | YES  |     | NULL    |       |
+| pixwidth_hor  | char(14)   | YES  |     | NULL    |       |
+| pixwidth_vert | char(14)   | YES  |     | NULL    |       |
++---------------+------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> describe au_pix;
++---------------+------------+------+-----+---------+-------+
+| Field         | Type       | Null | Key | Default | Extra |
++---------------+------------+------+-----+---------+-------+
+| au_id         | char(11)   | NO   | PRI | NULL    |       |
+| pic           | mediumblob | YES  |     | NULL    |       |
+| format_type   | char(11)   | YES  |     | NULL    |       |
+| bytesize      | int(11)    | YES  |     | NULL    |       |
+| pixwidth_hor  | char(14)   | YES  |     | NULL    |       |
+| pixwidth_vert | char(14)   | YES  |     | NULL    |       |
++---------------+------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.au_pix;
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| au_pix |          0 | PRIMARY  |            1 | au_id       | A         |           0 |     NULL | NULL   |      | BTREE      |         |               |
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from authors;
++-------------+----------------+-------------+--------------+----------------------+----------------+-------+---------+------------+
+| au_id       | au_lname       | au_fname    | phone        | address              | city           | state | country | postalcode |
++-------------+----------------+-------------+--------------+----------------------+----------------+-------+---------+------------+
+| 172-32-1176 | White          | Johnson     | 408 496-7223 | 10932 Bigge Rd.      | Menlo Park     | CA    | USA     | 94025      |
+| 213-46-8915 | Green          | Marjorie    | 415 986-7020 | 309 63rd St. #411    | Oakland        | CA    | USA     | 94618      |
+| 238-95-7766 | Carson         | Cheryl      | 415 548-7723 | 589 Darwin Ln.       | Berkeley       | CA    | USA     | 94705      |
+| 267-41-2394 | O'Leary        | Michael     | 408 286-2428 | 22 Cleveland Av. #14 | San Jose       | CA    | USA     | 95128      |
+| 274-80-9391 | Straight       | Dick        | 415 834-2919 | 5420 College Av.     | Oakland        | CA    | USA     | 94609      |
+| 341-22-1782 | Smith          | Meander     | 913 843-0462 | 10 Mississippi Dr.   | Lawrence       | KS    | USA     | 66044      |
+| 409-56-7008 | Bennet         | Abraham     | 415 658-9932 | 6223 Bateman St.     | Berkeley       | CA    | USA     | 94705      |
+| 427-17-2319 | Dull           | Ann         | 415 836-7128 | 3410 Blonde St.      | Palo Alto      | CA    | USA     | 94301      |
+| 472-27-2349 | Gringlesby     | Burt        | 707 938-6445 | PO Box 792           | Covelo         | CA    | USA     | 95428      |
+| 486-29-1786 | Locksley       | Chastity    | 415 585-4620 | 18 Broadway Av.      | San Francisco  | CA    | USA     | 94130      |
+| 527-72-3246 | Greene         | Morningstar | 615 297-2723 | 22 Graybar House Rd. | Nashville      | TN    | USA     | 37215      |
+| 648-92-1872 | Blotchet-Halls | Reginald    | 503 745-6402 | 55 Hillsdale Bl.     | Corvallis      | OR    | USA     | 97330      |
+| 672-71-3249 | Yokomoto       | Akiko       | 415 935-4228 | 3 Silver Ct.         | Walnut Creek   | CA    | USA     | 94595      |
+| 712-45-1867 | del Castillo   | Innes       | 615 996-8275 | 2286 Cram Pl. #86    | Ann Arbor      | MI    | USA     | 48105      |
+| 722-51-5454 | DeFrance       | Michel      | 219 547-9982 | 3 Balding Pl.        | Gary           | IN    | USA     | 46403      |
+| 724-08-9931 | Stringer       | Dirk        | 415 843-2991 | 5420 Telegraph Av.   | Oakland        | CA    | USA     | 94609      |
+| 724-80-9391 | MacFeather     | Stearns     | 415 354-7128 | 44 Upland Hts.       | Oakland        | CA    | USA     | 94612      |
+| 756-30-7391 | Karsen         | Livia       | 415 534-9219 | 5720 McAuley St.     | Oakland        | CA    | USA     | 94609      |
+| 807-91-6654 | Panteley       | Sylvia      | 301 946-8853 | 1956 Arlington Pl.   | Rockville      | MD    | USA     | 20853      |
+| 846-92-7186 | Hunter         | Sheryl      | 415 836-7128 | 3410 Blonde St.      | Palo Alto      | CA    | USA     | 94301      |
+| 893-72-1158 | McBadden       | Heather     | 707 448-4982 | 301 Putnam           | Vacaville      | CA    | USA     | 95688      |
+| 899-46-2035 | Ringer         | Anne        | 801 826-0752 | 67 Seventh Av.       | Salt Lake City | UT    | USA     | 84152      |
+| 998-72-3567 | Ringer         | Albert      | 801 826-0752 | 67 Seventh Av.       | Salt Lake City | UT    | USA     | 84152      |
++-------------+----------------+-------------+--------------+----------------------+----------------+-------+---------+------------+
+23 rows in set (0.00 sec)
+
+mysql> describe authors;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| au_id      | varchar(11) | NO   | PRI | NULL    |       |
+| au_lname   | varchar(40) | NO   | MUL | NULL    |       |
+| au_fname   | varchar(20) | NO   |     | NULL    |       |
+| phone      | char(12)    | NO   |     | NULL    |       |
+| address    | varchar(40) | YES  |     | NULL    |       |
+| city       | varchar(20) | YES  |     | NULL    |       |
+| state      | char(2)     | YES  |     | NULL    |       |
+| country    | varchar(12) | YES  |     | NULL    |       |
+| postalcode | char(10)    | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.authors;
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table   | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| authors |          0 | PRIMARY  |            1 | au_id       | A         |          23 |     NULL | NULL   |      | BTREE      |         |               |
+| authors |          0 | auidind  |            1 | au_id       | A         |          23 |     NULL | NULL   |      | BTREE      |         |               |
+| authors |          1 | aunmind  |            1 | au_lname    | A         |          23 |     NULL | NULL   |      | BTREE      |         |               |
+| authors |          1 | aunmind  |            2 | au_fname    | A         |          23 |     NULL | NULL   |      | BTREE      |         |               |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> show tables'
+    '> ;
+    '> show tables;
+    '> 
+    '> ;
+    '> 'yes'
+    '> l
+    '> ;
+    '> '
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''
+;
+show tables;
+
+;
+'yes'
+l
+;
+'' at line 1
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from blurbs;
++-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| au_id       | copy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
++-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 409-56-7008 | Bennet was the classic too-busy
+executive.  After discovering computer databases he now has the time to
+run several successful businesses and sit on three major corporate
+boards.  Bennet also donates time to community service organizations.
+Miraculously, he also finds time to write and market executive-oriented
+in-depth computer hardware and software reviews.  "I'm hyperkinetic,
+so being dynamic and fast-movin
+organized isn't easy for me or for anyone I know.  There's just one
+word for that: `databases!' Databases can cure you or kill you.  If you
+get the right one, you can be like me.  If you get the wrong one, watch
+out.  Read my book!"                                                                                                                                                                                                                                                                                                                                                                                           |
+| 486-29-1786 | If Chastity Locksley didn't
+exist, this troubled world would have created her!  Not only did she
+master the mystic secrets of inner strength to conquer adversity when
+she encountered it in life, but, after "reinventing herself", as she
+says, by writing "Emotional Security: A New Algorithm" following the
+devastating loss of her cat Old Algorithm, she also founded Publish or
+Perish, the page-by-page, day-by-day, write-yourself-to-wellness
+encounter workshops franchise empire, the better to share her inspiring
+discoveries with us all.  Her "Net Etiquette," a brilliant social
+treatise in its own right and a fabulous pun, is the only civilized
+alternative to the gross etiquette often practiced on the public
+networks.                                                                                                                                                                                                                                                                                                                |
+| 648-92-1872 | A chef's chef and a raconteur's
+raconteur, Reginald Blotchet-Halls calls London his second home. "Th'
+palace kitchen's me first 'ome, act'lly!" Blotchet-Halls' astounding
+ability to delight our palates with palace delights is matched only by
+his equal skill in satisfying our perpetual hunger for delicious
+back-stairs  ssip by serving up tidbits and entrees literally fit for
+a king!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 672-71-3249 | They asked me to write about
+myself and my book, so here  es:  I started a restaurant called "de
+Gustibus" with two of my friends.  We named it that because you really
+can't discuss taste.  We're very popular with young business types
+because we're young business types ourselves.  Whenever we tried to  
+out to eat in a group we always  t into these long tiresome
+ne tiations: "I just ate Italian," or "I ate Greek yesterday," or
+I NEVER eat anything that's not organic!"  Inefficient.  Not what
+business needs today.  So, it came to us that we needed a restaurant we
+could allgo to every day and not eat the same thing twice in a row
+maybe for a year!  We thought, "Hey, why make people choose one kind
+of restaurant over another, when what they really want is a different
+kind of food?"  At de Gustibus you can eat Italian, Chinese, Japanese,
+Greek, Russian, Tasmanian, Iranian, and on and on all at the same
+time.  You never have to choose.  You can even mix and match!  We just
+pooled our recipes, opened the doors, and never looked back.  We're a
+big hit, what can I say?  My recipes in "Sushi, Anyone?" are used at
+de Gustibus.  They satisfy crowds for us every day.  They will work for
+you, too.  Period! |
+| 899-46-2035 | Anne Ringer ran away from the
+circus as a child.  A university creative writing professor and her
+family took Anne in and raised her as one of their own.  In this warm
+and television-less setting she learned to appreciate the great
+classics of literature.  The stream of aspiring and accomplished
+writers that flowed constantly through the house confirmed her
+repudiation of the circus family she'd been born into: "Barbarians!"
+The steadily growing recognition of her literary work was, to her,
+vindication.  When her brother's brush with death brought them together
+after many years, she took advantage of life's crazy chance thing and
+broke the wall of anger that she had constructed to separate them.
+Together they wrote, "Is Anger the Enemy?" an even greater
+blockbuster than her other collaborative work, with Michel DeFrance,
+"The Gourmet Microwave."                                                                                                                                                                        |
+| 998-72-3567 | Albert Ringer was born
+in a trunk to circus parents, but another kind of circus trunk played a
+more important role in his life years later.  He grew up as an
+itinerant wrestler and roustabout in the reknowned Ringer Brothers and
+Betty and Bernie's Circus.  Once known in the literary world only as
+Anne Ringer's wrestling brother, he became a writer while recuperating
+from a near-fatal injury received during a charity benefit bout with a 
+gorilla.  "Slingshotting" himself from the ring ropes, Albert flew
+over the  rilla's head and would have landed head first on the
+concrete.  He was saved from certain death by Nana, an elephant he
+befriended as a child, who caught him in her trunk.  Nana held him so
+tightly that three ribs cracked and he turned blue from lack of
+oxygen.  "I was delirious.  I had an out-of-body experience!  My whole
+life passed before me.  I promised myself 'If I get through this, I'll
+use my remaining time to share what I learned out there.'  I owe it all
+to Nana!"                              |
++-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+6 rows in set (0.00 sec)
+
+mysql> describe blurbs;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| au_id | varchar(11) | NO   | PRI | NULL    |       |
+| copy  | text        | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.blurbs;
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| blurbs |          0 | PRIMARY  |            1 | au_id       | A         |           6 |     NULL | NULL   |      | BTREE      |         |               |
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from discounts;
++----------------------+---------+--------+---------+----------+
+| discounttype         | stor_id | lowqty | highqty | discount |
++----------------------+---------+--------+---------+----------+
+| Customer Discount    | 8042    |   NULL |    NULL |        5 |
+| Huge Volume Discount | 7131    |   1001 |    NULL |       10 |
+| Initial Customer     | 5023    |   NULL |    NULL |     10.5 |
+| Volume Discount      | 7066    |    100 |    1000 |      6.7 |
++----------------------+---------+--------+---------+----------+
+4 rows in set (0.00 sec)
+
+mysql> describe discounts;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| discounttype | varchar(40) | NO   | PRI | NULL    |       |
+| stor_id      | char(4)     | NO   | PRI |         |       |
+| lowqty       | smallint(6) | YES  |     | NULL    |       |
+| highqty      | smallint(6) | YES  |     | NULL    |       |
+| discount     | float       | NO   |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.discounts;
++-----------+------------+----------+--------------+--------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table     | Non_unique | Key_name | Seq_in_index | Column_name  | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-----------+------------+----------+--------------+--------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| discounts |          0 | PRIMARY  |            1 | discounttype | A         |           4 |     NULL | NULL   |      | BTREE      |         |               |
+| discounts |          0 | PRIMARY  |            2 | stor_id      | A         |           4 |     NULL | NULL   |      | BTREE      |         |               |
+| discounts |          1 | stor_id  |            1 | stor_id      | A         |           4 |     NULL | NULL   |      | BTREE      |         |               |
++-----------+------------+----------+--------------+--------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from publishers;
++--------+----------------------+------------+-------+
+| pub_id | pub_name             | city       | state |
++--------+----------------------+------------+-------+
+| 0736   | New Age Books        | Boston     | MA    |
+| 0877   | Binnet & Hardley     | Washington | DC    |
+| 1389   | Algodata Infosystems | Berkeley   | CA    |
++--------+----------------------+------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> describe publishers;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pub_id   | char(4)     | NO   | PRI | NULL    |       |
+| pub_name | varchar(40) | YES  |     | NULL    |       |
+| city     | varchar(20) | YES  |     | NULL    |       |
+| state    | char(2)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.publishers;
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table      | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| publishers |          0 | PRIMARY  |            1 | pub_id      | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| publishers |          0 | pubind   |            1 | pub_id      | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from roysched;
++----------+---------+---------+---------+
+| title_id | lorange | hirange | royalty |
++----------+---------+---------+---------+
+| BU1032   |       0 |    5000 |      10 |
+| BU1032   |    5001 |   50000 |      12 |
+| BU1111   |       0 |    4000 |      10 |
+| BU1111   |    4001 |    8000 |      12 |
+| BU1111   |    8001 |   10000 |      14 |
+| BU1111   |   12001 |   16000 |      16 |
+| BU1111   |   16001 |   20000 |      18 |
+| BU1111   |   20001 |   24000 |      20 |
+| BU1111   |   24001 |   28000 |      22 |
+| BU1111   |   28001 |   50000 |      24 |
+| BU2075   |       0 |    1000 |      10 |
+| BU2075   |    1001 |    3000 |      12 |
+| BU2075   |    3001 |    5000 |      14 |
+| BU2075   |    5001 |    7000 |      16 |
+| BU2075   |    7001 |   10000 |      18 |
+| BU2075   |   10001 |   12000 |      20 |
+| BU2075   |   12001 |   14000 |      22 |
+| BU2075   |   14001 |   50000 |      24 |
+| BU7832   |       0 |    5000 |      10 |
+| BU7832   |    5001 |   10000 |      12 |
+| BU7832   |   10001 |   15000 |      14 |
+| BU7832   |   15001 |   20000 |      16 |
+| MC2222   |       0 |    2000 |      10 |
+| MC2222   |    2001 |    4000 |      12 |
+| MC2222   |    4001 |    8000 |      14 |
+| MC2222   |    8001 |   12000 |      16 |
+| MC2222   |   12001 |   20000 |      18 |
+| MC2222   |   20001 |   50000 |      20 |
+| MC3021   |       0 |    1000 |      10 |
+| MC3021   |    1001 |    2000 |      12 |
+| MC3021   |    2001 |    4000 |      14 |
+| MC3021   |    4001 |    6000 |      16 |
+| MC3021   |    6001 |    8000 |      18 |
+| MC3021   |    8001 |   10000 |      20 |
+| MC3021   |   10001 |   12000 |      22 |
+| MC3021   |   12001 |   50000 |      24 |
+| PC1035   |       0 |    2000 |      10 |
+| PC1035   |    2001 |    3000 |      12 |
+| PC1035   |    3001 |    4000 |      14 |
+| PC1035   |    4001 |   10000 |      16 |
+| PC1035   |   10001 |   50000 |      18 |
+| PC8888   |       0 |    5000 |      10 |
+| PC8888   |    5001 |   10000 |      12 |
+| PC8888   |   10001 |   15000 |      14 |
+| PC8888   |   15001 |   50000 |      16 |
+| PS1372   |   10001 |   20000 |      12 |
+| PS1372   |   20001 |   30000 |      14 |
+| PS1372   |   30001 |   40000 |      16 |
+| PS1372   |   40001 |   50000 |      18 |
+| PS2091   |       0 |    1000 |      10 |
+| PS2091   |    1001 |    5000 |      12 |
+| PS2091   |    5001 |   10000 |      14 |
+| PS2091   |   10001 |   50000 |      16 |
+| PS2106   |       0 |    2000 |      10 |
+| PS2106   |    2001 |    5000 |      12 |
+| PS2106   |    5001 |   10000 |      14 |
+| PS2106   |   10001 |   50000 |      16 |
+| PS3333   |       0 |    5000 |      10 |
+| PS3333   |    5001 |   10000 |      12 |
+| PS3333   |   10001 |   15000 |      14 |
+| PS3333   |   15001 |   50000 |      16 |
+| PS7777   |       0 |    5000 |      10 |
+| PS7777   |    5001 |   50000 |      12 |
+| TC3218   |       0 |    2000 |      10 |
+| TC3218   |    2001 |    4000 |      12 |
+| TC3218   |    4001 |    6000 |      14 |
+| TC3218   |    6001 |    8000 |      16 |
+| TC3218   |    8001 |   10000 |      18 |
+| TC3218   |   10001 |   12000 |      20 |
+| TC3218   |   12001 |   14000 |      22 |
+| TC3218   |   14001 |   50000 |      24 |
+| TC4203   |       0 |    2000 |      10 |
+| TC4203   |    2001 |    8000 |      12 |
+| TC4203   |    8001 |   16000 |      14 |
+| TC4203   |   16001 |   24000 |      16 |
+| TC4203   |   24001 |   32000 |      18 |
+| TC4203   |   32001 |   40000 |      20 |
+| TC4203   |   40001 |   50000 |      22 |
+| TC7777   |       0 |    5000 |      10 |
+| TC7777   |    5001 |   15000 |      12 |
+| TC7777   |   15001 |   50000 |      14 |
++----------+---------+---------+---------+
+81 rows in set (0.00 sec)
+
+mysql> describe roysched;
++----------+------------+------+-----+---------+-------+
+| Field    | Type       | Null | Key | Default | Extra |
++----------+------------+------+-----+---------+-------+
+| title_id | varchar(6) | NO   | PRI | NULL    |       |
+| lorange  | int(11)    | NO   | PRI | 0       |       |
+| hirange  | int(11)    | YES  |     | NULL    |       |
+| royalty  | int(11)    | YES  |     | NULL    |       |
++----------+------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> show indexes in F1536wkopf.roysched;
+ERROR 1142 (42000): SELECT command denied to user 'F15336wkopf'@'localhost' for table 'roysched'
+mysql> show indexes in F15336.roysched;
+ERROR 1142 (42000): SELECT command denied to user 'F15336wkopf'@'localhost' for table 'roysched'
+mysql> show indexes in F15336wkopf.roysched;
++----------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table    | Non_unique | Key_name   | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++----------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| roysched |          0 | PRIMARY    |            1 | title_id    | A         |          81 |     NULL | NULL   |      | BTREE      |         |               |
+| roysched |          0 | PRIMARY    |            2 | lorange     | A         |          81 |     NULL | NULL   |      | BTREE      |         |               |
+| roysched |          1 | titleidind |            1 | title_id    | A         |          81 |     NULL | NULL   |      | BTREE      |         |               |
++----------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from sales;
++---------+--------------------+---------------------+
+| stor_id | ord_num            | date                |
++---------+--------------------+---------------------+
+| 5023    | AB-123-DEF-425-1Z3 | 0000-00-00 00:00:00 |
+| 5023    | AB-872-DEF-732-2Z1 | 0000-00-00 00:00:00 |
+| 5023    | AX-532-FED-452-2Z7 | 0000-00-00 00:00:00 |
+| 5023    | BS-345-DSE-860-1F2 | 0000-00-00 00:00:00 |
+| 5023    | GH-542-NAD-713-9F9 | 0000-00-00 00:00:00 |
+| 5023    | NF-123-ADS-642-9G3 | 0000-00-00 00:00:00 |
+| 5023    | XS-135-DER-432-8J2 | 0000-00-00 00:00:00 |
+| 5023    | ZA-000-ASD-324-4D1 | 0000-00-00 00:00:00 |
+| 5023    | ZD-123-DFG-752-9G8 | 0000-00-00 00:00:00 |
+| 5023    | ZS-645-CAT-415-1B2 | 0000-00-00 00:00:00 |
+| 5023    | ZZ-999-ZZZ-999-0A0 | 0000-00-00 00:00:00 |
+| 6380    | 234518             | 0000-00-00 00:00:00 |
+| 6380    | 342157             | 0000-00-00 00:00:00 |
+| 6380    | 356921             | 0000-00-00 00:00:00 |
+| 7066    | BA27618            | 0000-00-00 00:00:00 |
+| 7066    | BA52498            | 0000-00-00 00:00:00 |
+| 7066    | BA71224            | 0000-00-00 00:00:00 |
+| 7067    | NB-1.142           | 0000-00-00 00:00:00 |
+| 7067    | NB-3.142           | 0000-00-00 00:00:00 |
+| 7131    | Asoap132           | 0000-00-00 00:00:00 |
+| 7131    | Asoap432           | 0000-00-00 00:00:00 |
+| 7131    | Fsoap867           | 0000-00-00 00:00:00 |
+| 7896    | 124152             | 0000-00-00 00:00:00 |
+| 7896    | 234518             | 0000-00-00 00:00:00 |
+| 8042    | 12-F-9             | 0000-00-00 00:00:00 |
+| 8042    | 13-E-7             | 0000-00-00 00:00:00 |
+| 8042    | 13-J-9             | 0000-00-00 00:00:00 |
+| 8042    | 55-V-7             | 0000-00-00 00:00:00 |
+| 8042    | 91-A-7             | 0000-00-00 00:00:00 |
+| 8042    | 91-V-7             | 0000-00-00 00:00:00 |
++---------+--------------------+---------------------+
+30 rows in set (0.00 sec)
+
+mysql> describe sales;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| stor_id | char(4)     | NO   | PRI | NULL    |       |
+| ord_num | varchar(20) | NO   | PRI | NULL    |       |
+| date    | datetime    | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> show indexes in F15336wkopf.sales;
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| sales |          0 | PRIMARY  |            1 | stor_id     | A         |          30 |     NULL | NULL   |      | BTREE      |         |               |
+| sales |          0 | PRIMARY  |            2 | ord_num     | A         |          30 |     NULL | NULL   |      | BTREE      |         |               |
+| sales |          0 | salesind |            1 | stor_id     | A         |          30 |     NULL | NULL   |      | BTREE      |         |               |
+| sales |          0 | salesind |            2 | ord_num     | A         |          30 |     NULL | NULL   |      | BTREE      |         |               |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from salesdetail;
++---------+--------------------+----------+------+----------+
+| stor_id | ord_num            | title_id | qty  | discount |
++---------+--------------------+----------+------+----------+
+| 5023    | AX-532-FED-452-2Z7 | BU1032   |  200 |     46.7 |
+| 5023    | AX-532-FED-452-2Z7 | BU1111   |  370 |     46.7 |
+| 5023    | AX-532-FED-452-2Z7 | BU2075   |  500 |     46.7 |
+| 5023    | AX-532-FED-452-2Z7 | BU7832   |  150 |     46.7 |
+| 5023    | AX-532-FED-452-2Z7 | PC8888   |  105 |     46.7 |
+| 5023    | AX-532-FED-452-2Z7 | PS7777   |  125 |     46.7 |
+| 5023    | AX-532-FED-452-2Z7 | TC4203   |  550 |     46.7 |
+| 5023    | BS-345-DSE-860-1F2 | PC1035   | 1000 |     46.7 |
+| 5023    | NF-123-ADS-642-9G3 | BU1032   | 1000 |     46.7 |
+| 5023    | NF-123-ADS-642-9G3 | BU7832   | 1400 |       50 |
+| 5023    | NF-123-ADS-642-9G3 | PC1035   |  750 |     46.7 |
+| 5023    | NF-123-ADS-642-9G3 | PC8888   |  300 |     46.7 |
+| 5023    | NF-123-ADS-642-9G3 | TC4203   | 3500 |       50 |
+| 5023    | NF-123-ADS-642-9G3 | TC7777   | 1000 |     46.7 |
+| 5023    | XS-135-DER-432-8J2 | BU7832   |  885 |     46.7 |
+| 5023    | XS-135-DER-432-8J2 | PC1035   | 2138 |       50 |
+| 5023    | XS-135-DER-432-8J2 | PS2091   |  845 |     46.7 |
+| 5023    | XS-135-DER-432-8J2 | PS7777   |  581 |     46.7 |
+| 5023    | XS-135-DER-432-8J2 | TC3218   |   85 |       40 |
+| 5023    | XS-135-DER-432-8J2 | TC7777   | 1090 |       50 |
+| 5023    | ZA-000-ASD-324-4D1 | BU1111   | 1100 |       50 |
+| 5023    | ZD-123-DFG-752-9G8 | BU7832   |  900 |     46.7 |
+| 5023    | ZD-123-DFG-752-9G8 | PS2091   | 1000 |     46.7 |
+| 5023    | ZD-123-DFG-752-9G8 | PS3333   |  750 |     46.7 |
+| 5023    | ZZ-999-ZZZ-999-0A0 | PS1372   |  375 |     46.7 |
+| 6380    | 234518             | BU1032   |  320 |     46.7 |
+| 6380    | 234518             | BU2075   |  135 |     46.7 |
+| 7066    | BA27618            | MC3021   |  200 |     57.2 |
+| 7066    | BA52498            | BU7832   |  100 |     46.7 |
+| 7066    | BA71224            | PC1035   |  300 |     46.7 |
+| 7066    | BA71224            | PC8888   |  350 |     46.7 |
+| 7066    | BA71224            | PS7777   |  200 |     46.7 |
+| 7066    | BA71224            | TC4203   |  500 |     46.7 |
+| 7066    | BA71224            | TC7777   |  350 |     46.7 |
+| 7067    | NB-3.142           | BU1111   |  175 |     46.7 |
+| 7067    | NB-3.142           | BU7832   |  360 |     46.7 |
+| 7067    | NB-3.142           | PC8888   |  335 |     46.7 |
+| 7067    | NB-3.142           | PS2091   |  200 |     46.7 |
+| 7067    | NB-3.142           | PS3333   |  345 |     46.7 |
+| 7067    | NB-3.142           | PS7777   |  250 |     46.7 |
+| 7067    | NB-3.142           | TC4203   |  512 |     46.7 |
+| 7131    | Asoap432           | BU1111   |  500 |     46.7 |
+| 7131    | Asoap432           | TC3218   |   50 |       40 |
+| 7131    | Asoap432           | TC7777   |   80 |       40 |
+| 7131    | Fsoap867           | BU1032   |  200 |     46.7 |
+| 7131    | Fsoap867           | MC3021   |  400 |     46.7 |
+| 7131    | Fsoap867           | TC4203   |  350 |     46.7 |
+| 7896    | 124152             | PC1035   |   25 |     50.5 |
+| 7896    | 234518             | BU1111   |  340 |     46.7 |
+| 7896    | 234518             | TC3218   |   75 |       40 |
+| 7896    | 234518             | TC4203   |  275 |     46.7 |
+| 7896    | 234518             | TC7777   |   75 |       40 |
+| 8042    | 12-F-9             | MC3021   |  270 |     62.2 |
+| 8042    | 12-F-9             | PC1035   |  133 |     62.2 |
+| 8042    | 13-E-7             | BU1032   |  300 |     51.7 |
+| 8042    | 13-E-7             | BU2075   |  150 |     51.7 |
+| 8042    | 13-E-7             | PC1035   |  400 |     51.7 |
+| 8042    | 13-E-7             | TC4203   |  226 |     51.7 |
+| 8042    | 13-J-9             | BU7832   |  300 |     51.7 |
+| 8042    | 13-J-9             | TC4203   |  250 |     51.7 |
+| 8042    | 55-V-7             | PS2106   |   31 |       45 |
+| 8042    | 91-A-7             | MC3021   |   69 |       45 |
+| 8042    | 91-A-7             | PS2106   |   30 |       45 |
+| 8042    | 91-A-7             | PS3333   |   90 |       45 |
+| 8042    | 91-A-7             | PS7777   |  180 |     51.7 |
+| 8042    | 91-A-7             | TC3218   |   40 |       45 |
+| 8042    | 91-V-7             | PS2106   |   50 |       45 |
++---------+--------------------+----------+------+----------+
+67 rows in set (0.00 sec)
+
+mysql> describe salesdetail;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| stor_id  | char(4)     | NO   | PRI | NULL    |       |
+| ord_num  | varchar(20) | NO   | PRI | NULL    |       |
+| title_id | varchar(6)  | NO   | PRI | NULL    |       |
+| qty      | smallint(6) | NO   |     | NULL    |       |
+| discount | float       | NO   |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.salesdetail;
++-------------+------------+----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table       | Non_unique | Key_name       | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------------+------------+----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| salesdetail |          0 | PRIMARY        |            1 | stor_id     | A         |          67 |     NULL | NULL   |      | BTREE      |         |               |
+| salesdetail |          0 | PRIMARY        |            2 | ord_num     | A         |          67 |     NULL | NULL   |      | BTREE      |         |               |
+| salesdetail |          0 | PRIMARY        |            3 | title_id    | A         |          67 |     NULL | NULL   |      | BTREE      |         |               |
+| salesdetail |          1 | titleidind     |            1 | title_id    | A         |          67 |     NULL | NULL   |      | BTREE      |         |               |
+| salesdetail |          1 | salesdetailind |            1 | stor_id     | A         |          67 |     NULL | NULL   |      | BTREE      |         |               |
+| salesdetail |          1 | salesdetailind |            2 | ord_num     | A         |          67 |     NULL | NULL   |      | BTREE      |         |               |
++-------------+------------+----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                | 
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> use F15336wkopf
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++-----------------------+
+| Tables_in_F15336wkopf |
++-----------------------+
+| au_pix                |
+| authors               |
+| blurbs                |
+| discounts             |
+| publishers            |
+| roysched              |
+| sales                 |
+| salesdetail           |
+| stores                |
+| titleauthor           |
+| titles                |
+| titleview             |
++-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from stores;
++---------+--------------------------------------+-------------------------+-----------+-------+---------+------------+----------+
+| stor_id | stor_name                            | stor_address            | city      | state | country | postalcode | payterms |
++---------+--------------------------------------+-------------------------+-----------+-------+---------+------------+----------+
+| 5023    | Thoreau Reading Discount Chain       | 20435 Walden Expressway | Concord   | MA    | USA     | 01776      | Net 60   |
+| 6380    | Eric the Read Books                  | 788 Catamaugus Ave.     | Seattle   | WA    | USA     | 98056      | Net 60   |
+| 7066    | Barnum's                             | 567 Pasadena Ave.       | Tustin    | CA    | USA     | 92789      | Net 30   |
+| 7067    | News & Brews                         | 577 First St.           | Los Gatos | CA    | USA     | 96745      | Net 30   |
+| 7131    | Doc-U-Mat: Quality Laundry and Books | 24-A Avrogado Way       | Remulade  | WA    | USA     | 98014      | Net 60   |
+| 7896    | Fricative Bookshop                   | 89 Madison St.          | Fremont   | CA    | USA     | 90019      | Net 60   |
+| 8042    | Bookbeat                             | 679 Carson St.          | Portland  | OR    | USA     | 89076      | Net 30   |
++---------+--------------------------------------+-------------------------+-----------+-------+---------+------------+----------+
+7 rows in set (0.00 sec)
+
+mysql> describe stores;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| stor_id      | char(4)     | NO   | PRI | NULL    |       |
+| stor_name    | varchar(40) | YES  |     | NULL    |       |
+| stor_address | varchar(40) | YES  |     | NULL    |       |
+| city         | varchar(20) | YES  |     | NULL    |       |
+| state        | char(2)     | YES  |     | NULL    |       |
+| country      | varchar(12) | YES  |     | NULL    |       |
+| postalcode   | char(10)    | YES  |     | NULL    |       |
+| payterms     | varchar(12) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.stores;
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| stores |          0 | PRIMARY  |            1 | stor_id     | A         |           7 |     NULL | NULL   |      | BTREE      |         |               |
++--------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql> select * from titleauthor;
++-------------+----------+--------+------------+
+| au_id       | title_id | au_ord | royaltyper |
++-------------+----------+--------+------------+
+| 172-32-1176 | PS3333   |      1 |        100 |
+| 213-46-8915 | BU1032   |      2 |         40 |
+| 213-46-8915 | BU2075   |      1 |        100 |
+| 238-95-7766 | PC1035   |      1 |        100 |
+| 267-41-2394 | BU1111   |      2 |         40 |
+| 267-41-2394 | TC7777   |      2 |         30 |
+| 274-80-9391 | BU7832   |      1 |        100 |
+| 409-56-7008 | BU1032   |      1 |         60 |
+| 427-17-2319 | PC8888   |      1 |         50 |
+| 472-27-2349 | TC7777   |      3 |         30 |
+| 486-29-1786 | PC9999   |      1 |        100 |
+| 486-29-1786 | PS7777   |      1 |        100 |
+| 648-92-1872 | TC4203   |      1 |        100 |
+| 672-71-3249 | TC7777   |      1 |         40 |
+| 712-45-1867 | MC2222   |      1 |        100 |
+| 722-51-5454 | MC3021   |      1 |         75 |
+| 724-80-9391 | BU1111   |      1 |         60 |
+| 724-80-9391 | PS1372   |      2 |         25 |
+| 756-30-7391 | PS1372   |      1 |         75 |
+| 807-91-6654 | TC3218   |      1 |        100 |
+| 846-92-7186 | PC8888   |      2 |         50 |
+| 899-46-2035 | MC3021   |      2 |         25 |
+| 899-46-2035 | PS2091   |      2 |         50 |
+| 998-72-3567 | PS2091   |      1 |         50 |
+| 998-72-3567 | PS2106   |      1 |        100 |
++-------------+----------+--------+------------+
+25 rows in set (0.00 sec)
+
+mysql> describe titleauthor;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| au_id      | varchar(11) | NO   | PRI | NULL    |       |
+| title_id   | varchar(6)  | NO   | PRI | NULL    |       |
+| au_ord     | tinyint(4)  | YES  |     | NULL    |       |
+| royaltyper | int(11)     | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> show indexes in F15336wkopf.titleauthor;
++-------------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table       | Non_unique | Key_name   | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| titleauthor |          0 | PRIMARY    |            1 | au_id       | A         |          25 |     NULL | NULL   |      | BTREE      |         |               |
+| titleauthor |          0 | PRIMARY    |            2 | title_id    | A         |          25 |     NULL | NULL   |      | BTREE      |         |               |
+| titleauthor |          0 | taind      |            1 | au_id       | A         |          25 |     NULL | NULL   |      | BTREE      |         |               |
+| titleauthor |          0 | taind      |            2 | title_id    | A         |          25 |     NULL | NULL   |      | BTREE      |         |               |
+| titleauthor |          1 | auidind    |            1 | au_id       | A         |          25 |     NULL | NULL   |      | BTREE      |         |               |
+| titleauthor |          1 | titleidind |            1 | title_id    | A         |          25 |     NULL | NULL   |      | BTREE      |         |               |
++-------------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from titles;
++----------+-----------------------------------------------------------------+--------------+--------+-------+----------+-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+----------+
+| title_id | title                                                           | type         | pub_id | price | advance  | total_sales | notes                                                                                                                                                                                                  | pubdate             | contract |
++----------+-----------------------------------------------------------------+--------------+--------+-------+----------+-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+----------+
+| BU1032   | The Busy Executive's Database Guide                             | business     | 1389   | 19.99 |  5000.00 |        4095 | An overview of available database systems with emphasis on common business applications.  Illustrated.                                                                                                 | 0000-00-00 00:00:00 |         |
+| BU1111   | Cooking with Computers: Surreptitious Balance Sheets            | business     | 1389   | 11.95 |  5000.00 |        3876 | Helpful hints on how to use your electronic resources to the best advantage.                                                                                                                           | 0000-00-00 00:00:00 |         |
+| BU2075   | You Can Combat Computer Stress!                                 | business     | 0736   |  2.99 | 10125.00 |       18722 | The latest medical and psychological techniques for living with the electronic office.  Easy-to-understand explanations.                                                                               | 0000-00-00 00:00:00 |         |
+| BU7832   | Straight Talk About Computers                                   | business     | 1389   | 19.99 |  5000.00 |        4095 | Annotated analysis of what computers can do for you: a no-hype guide for the critical user.                                                                                                            | 0000-00-00 00:00:00 |         |
+| MC2222   | Silicon Valley Gastronomic Treats                               | mod_cook     | 0877   | 19.99 |     0.00 |        2032 | Favorite recipes for quick, easy, and elegant meals, tried and tested by people who never have time to eat, let alone cook.                                                                            | 0000-00-00 00:00:00 |         |
+| MC3021   | The Gourmet Microwave                                           | mod_cook     | 0877   |  2.99 | 15000.00 |       22246 | Traditional French  urmet recipes adapted for modern microwave cooking.                                                                                                                                | 0000-00-00 00:00:00 |         |
+| MC3026   | The Psychology of Computer Cooking                              | UNDECIDED    | 0877   |  NULL |     NULL |        NULL | NULL                                                                                                                                                                                                   | NULL                |          |
+| PC1035   | But Is It User Friendly?                                        | popular_comp | 1389   | 22.95 |  7000.00 |        8780 | A survey of software for the naive user, focusing on the 'friendliness' of each.                                                                                                                       | 0000-00-00 00:00:00 |         |
+| PC8888   | Secrets of Silicon Valley                                       | popular_comp | 1389   | 20.00 |  8000.00 |        4095 | Muckraking reporting by two courageous women on the world's largest computer hardware and software manufacturers.                                                                                      | 0000-00-00 00:00:00 |         |
+| PC9999   | Net Etiquette                                                   | popular_comp | 1389   |  NULL |     NULL |        NULL | A must-read for computer conferencing debutantes!                                                                                                                                                      | NULL                |          |
+| PS1372   | Computer Phobic and Non-Phobic Individuals: Behavior Variations | psychology   | 0877   | 21.59 |  7000.00 |         375 | A must for the specialist, this book examines the difference between those who hate and fear computers and those who think they are swell.                                                             | 0000-00-00 00:00:00 |         |
+| PS2091   | Is Anger the Enemy?                                             | psychology   | 0736   | 10.95 |  2275.00 |        2045 | Carefully researched study of the effects of strong emotions on the body.  Metabolic charts included.                                                                                                  | 0000-00-00 00:00:00 |         |
+| PS2106   | Life Without Fear                                               | psychology   | 0736   |  7.00 |  6000.00 |         111 | New exercise, meditation, and nutritional techniques that can reduce the shock of daily interactions. Popular audience.  Sample menus included, exercise video available separately.                   | 0000-00-00 00:00:00 |         |
+| PS3333   | Prolonged Data Deprivation: Four Case Studies                   | psychology   | 0736   | 19.99 |  2000.00 |        4072 | What happens when the data runs dry?  Searching evaluations of information-shortage effects on heavy users.                                                                                            | 0000-00-00 00:00:00 |         |
+| PS7777   | Emotional Security: A New Algorithm                             | psychology   | 0736   |  7.99 |  4000.00 |        3336 | Protecting yourself and your loved ones from undue emotional stress in the modern world.  Use of computer and nutritional aids emphasized.                                                             | 0000-00-00 00:00:00 |         |
+| TC3218   | Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | trad_cook    | 0877   | 20.95 |  7000.00 |         375 | Profusely illustrated in color, this makes a wonderful gift book for a cuisine-oriented friend.                                                                                                        | 0000-00-00 00:00:00 |         |
+| TC4203   | Fifty Years in Buckingham Palace Kitchens                       | trad_cook    | 0877   | 11.95 |  4000.00 |       15096 | More anecdotes from the Queen's favorite cook describing life among English royalty.  Recipes, techniques, tender vignettes.                                                                           | 0000-00-00 00:00:00 |         |
+| TC7777   | Sushi, Anyone?                                                  | trad_cook    | 0877   | 14.99 |  8000.00 |        4095 | Detailed instructions on improving your position in life by learning how to make authentic Japanese sushi in your spare time.  5-10% increase in number of friends per recipe reported from beta test. | 0000-00-00 00:00:00 |         |
++----------+-----------------------------------------------------------------+--------------+--------+-------+----------+-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+----------+
+18 rows in set (0.00 sec)
+
+mysql> describe titles;
++-------------+---------------+------+-----+-----------+-------+
+| Field       | Type          | Null | Key | Default   | Extra |
++-------------+---------------+------+-----+-----------+-------+
+| title_id    | varchar(11)   | NO   | PRI | NULL      |       |
+| title       | varchar(80)   | NO   |     | NULL      |       |
+| type        | char(12)      | NO   |     | UNDECIDED |       |
+| pub_id      | char(4)       | YES  | MUL | NULL      |       |
+| price       | decimal(50,2) | YES  |     | NULL      |       |
+| advance     | decimal(50,2) | YES  |     | NULL      |       |
+| total_sales | int(11)       | YES  |     | NULL      |       |
+| notes       | varchar(200)  | YES  |     | NULL      |       |
+| pubdate     | datetime      | YES  |     | NULL      |       |
+| contract    | bit(1)        | NO   |     | NULL      |       |
++-------------+---------------+------+-----+-----------+-------+
+10 rows in set (0.01 sec)
+
+mysql> show indexes in F15336wkopf.titles;
++--------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name   | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| titles |          0 | PRIMARY    |            1 | title_id    | A         |          18 |     NULL | NULL   |      | BTREE      |         |               |
+| titles |          0 | titleidind |            1 | title_id    | A         |          18 |     NULL | NULL   |      | BTREE      |         |               |
+| titles |          1 | pub_id     |            1 | pub_id      | A         |          18 |     NULL | NULL   | YES  | BTREE      |         |               |
++--------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from titleview;
++-----------------------------------------------------------------+--------+----------------+-------+-------------+--------+
+| title                                                           | au_ord | au_lname       | price | total_sales | pub_id |
++-----------------------------------------------------------------+--------+----------------+-------+-------------+--------+
+| The Busy Executive's Database Guide                             |      2 | Green          | 19.99 |        4095 | 1389   |
+| The Busy Executive's Database Guide                             |      1 | Bennet         | 19.99 |        4095 | 1389   |
+| Cooking with Computers: Surreptitious Balance Sheets            |      2 | O'Leary        | 11.95 |        3876 | 1389   |
+| Cooking with Computers: Surreptitious Balance Sheets            |      1 | MacFeather     | 11.95 |        3876 | 1389   |
+| You Can Combat Computer Stress!                                 |      1 | Green          |  2.99 |       18722 | 0736   |
+| Straight Talk About Computers                                   |      1 | Straight       | 19.99 |        4095 | 1389   |
+| Silicon Valley Gastronomic Treats                               |      1 | del Castillo   | 19.99 |        2032 | 0877   |
+| The Gourmet Microwave                                           |      1 | DeFrance       |  2.99 |       22246 | 0877   |
+| The Gourmet Microwave                                           |      2 | Ringer         |  2.99 |       22246 | 0877   |
+| But Is It User Friendly?                                        |      1 | Carson         | 22.95 |        8780 | 1389   |
+| Secrets of Silicon Valley                                       |      1 | Dull           | 20.00 |        4095 | 1389   |
+| Secrets of Silicon Valley                                       |      2 | Hunter         | 20.00 |        4095 | 1389   |
+| Net Etiquette                                                   |      1 | Locksley       |  NULL |        NULL | 1389   |
+| Computer Phobic and Non-Phobic Individuals: Behavior Variations |      2 | MacFeather     | 21.59 |         375 | 0877   |
+| Computer Phobic and Non-Phobic Individuals: Behavior Variations |      1 | Karsen         | 21.59 |         375 | 0877   |
+| Is Anger the Enemy?                                             |      2 | Ringer         | 10.95 |        2045 | 0736   |
+| Is Anger the Enemy?                                             |      1 | Ringer         | 10.95 |        2045 | 0736   |
+| Life Without Fear                                               |      1 | Ringer         |  7.00 |         111 | 0736   |
+| Prolonged Data Deprivation: Four Case Studies                   |      1 | White          | 19.99 |        4072 | 0736   |
+| Emotional Security: A New Algorithm                             |      1 | Locksley       |  7.99 |        3336 | 0736   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean |      1 | Panteley       | 20.95 |         375 | 0877   |
+| Fifty Years in Buckingham Palace Kitchens                       |      1 | Blotchet-Halls | 11.95 |       15096 | 0877   |
+| Sushi, Anyone?                                                  |      2 | O'Leary        | 14.99 |        4095 | 0877   |
+| Sushi, Anyone?                                                  |      3 | Gringlesby     | 14.99 |        4095 | 0877   |
+| Sushi, Anyone?                                                  |      1 | Yokomoto       | 14.99 |        4095 | 0877   |
++-----------------------------------------------------------------+--------+----------------+-------+-------------+--------+
+25 rows in set (0.00 sec)
+
+mysql> describe titleview;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| title       | varchar(80)   | NO   |     | NULL    |       |
+| au_ord      | tinyint(4)    | YES  |     | NULL    |       |
+| au_lname    | varchar(40)   | NO   |     | NULL    |       |
+| price       | decimal(50,2) | YES  |     | NULL    |       |
+| total_sales | int(11)       | YES  |     | NULL    |       |
+| pub_id      | char(4)       | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> show indexes in F15336wkopf.titleview;
+Empty set (0.00 sec)
+
+mysql> show procedure status;
++-------------+-------------------------+-----------+---------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+| Db          | Name                    | Type      | Definer       | Modified            | Created             | Security_type | Comment | character_set_client | collation_connection | Database Collation |
++-------------+-------------------------+-----------+---------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+| F15336wkopf | byroyalty               | PROCEDURE | F15336wkopf@% | 2015-09-16 22:25:28 | 2015-09-16 22:25:28 | DEFINER       |         | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
+| F15336wkopf | insert_salesdetail_proc | PROCEDURE | F15336wkopf@% | 2015-09-16 22:25:28 | 2015-09-16 22:25:28 | DEFINER       |         | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
+| F15336wkopf | insert_sales_proc       | PROCEDURE | F15336wkopf@% | 2015-09-16 22:25:28 | 2015-09-16 22:25:28 | DEFINER       |         | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++-------------+-------------------------+-----------+---------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+3 rows in set (0.00 sec)
+
+
